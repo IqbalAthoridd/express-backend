@@ -172,7 +172,11 @@ app.patch('/item/:id', (req, res) => {
                 res.send({
                     success: true,
                     message: 'Data is Updated',
-                    data: dataResult
+                    data: {
+                        name,
+                        price,
+                        description
+                    }
                 })
             } else {
                 console.log(err.message)
