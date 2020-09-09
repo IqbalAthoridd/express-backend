@@ -4,6 +4,7 @@ const app = express()
 
 const db = require('./src/helpers/db')
 const qs = require('querystring')
+const { toUnicode } = require('punycode')
 
 app.use(bodyParser.urlencoded({
     extended: false
@@ -138,6 +139,49 @@ app.put('/item/:id', (req, res) => {
         })
     }
 
+})
+
+app.patch('/item/:id', (req, res) => {
+    const { id } = req.params;
+    let { name, price, description } = req.body;
+
+    db.query(`SELECT * FROM items WHERE id=${id}`, (err, dataResult, field) => {
+        console.log(name)
+        if (dataResult.length > 0) {
+            if (name === undefined) {
+                name = dataResult[0].name
+            }
+            if (price === undefined) {
+                price = dataResult[0].price
+            }
+            if (description === undefined) {
+                description = dataResult[0].description
+            }
+        } else {
+            res.send({
+                success: false,
+                message: "Data does't exist"
+            })
+        }
+
+        console.log(price, description, name)
+
+        db.query(`UPDATE items SET name='${name}',price=${price},description='${description}' WHERE id=${id}`, (err, result, field) => {
+            if (!err) {
+                res.send({
+                    success: true,
+                    message: 'Data is Updated',
+                    data: dataResult
+                })
+            } else {
+                console.log(err.message)
+                res.send({
+                    success: false,
+                    message: "Internal Server Error"
+                })
+            }
+        })
+    })
 })
 
 app.get('/item/:id', (req, res) => {
