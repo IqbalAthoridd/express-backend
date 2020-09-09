@@ -108,14 +108,18 @@ app.put('/item/:id', (req, res) => {
     const { name, price, description } = req.body;
     const { id } = req.params;
     if (name && price && description) {
-        db.query(`SELECT * FROM ITEMS WHERE id=${id}`, (req, dataItems, field) => {
+        db.query(`SELECT * FROM ITEMS WHERE id=${id}`, (req, dataItems, field) => { // Ini optional dan bisa di hapus
             if (dataItems.length > 0) {
                 db.query(`UPDATE items SET name ='${name}',price=${price},description='${description}' WHERE id=${id}`, (err, result, field) => {
                     if (!err) {
                         res.send({
                             success: true,
                             message: "data updated !",
-                            data: dataItems
+                            data: {
+                                name,
+                                price,
+                                description
+                            }
                         })
                     } else {
                         console.log(err.message)
@@ -126,9 +130,9 @@ app.put('/item/:id', (req, res) => {
                     }
                 })
             } else {
-                res.status(400).send({
+                res.status(500).send({
                     success: false,
-                    message: `Data does't exist`
+                    message: `Internal Server Error`
                 })
             }
         })
@@ -146,7 +150,6 @@ app.patch('/item/:id', (req, res) => {
     let { name, price, description } = req.body;
 
     db.query(`SELECT * FROM items WHERE id=${id}`, (err, dataResult, field) => {
-        console.log(name)
         if (dataResult.length > 0) {
             if (name === undefined) {
                 name = dataResult[0].name
@@ -158,13 +161,11 @@ app.patch('/item/:id', (req, res) => {
                 description = dataResult[0].description
             }
         } else {
-            res.send({
+            res.status(500).send({
                 success: false,
-                message: "Data does't exist"
+                message: "Internal Server Error"
             })
         }
-
-        console.log(price, description, name)
 
         db.query(`UPDATE items SET name='${name}',price=${price},description='${description}' WHERE id=${id}`, (err, result, field) => {
             if (!err) {
@@ -175,7 +176,7 @@ app.patch('/item/:id', (req, res) => {
                 })
             } else {
                 console.log(err.message)
-                res.send({
+                res.status(500).send({
                     success: false,
                     message: "Internal Server Error"
                 })
@@ -233,7 +234,7 @@ app.delete('/item/:id', (req, res) => {
                 }
             })
         } else {
-            res.send({
+            res.status(404).send({
                 success: false,
                 message: `Data does't exist`
             })
