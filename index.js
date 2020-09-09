@@ -104,8 +104,8 @@ app.get('/item', (req, res) => {
 })
 
 app.put('/item/:id', (req, res) => {
-    const { name, price, description } = req.body
-    const { id } = req.params
+    const { name, price, description } = req.body;
+    const { id } = req.params;
     if (name && price && description) {
         db.query(`SELECT * FROM ITEMS WHERE id=${id}`, (req, dataItems, field) => {
             if (dataItems.length > 0) {
@@ -127,7 +127,7 @@ app.put('/item/:id', (req, res) => {
             } else {
                 res.status(400).send({
                     success: false,
-                    message: `Data with id ${id} does't exist`
+                    message: `Data does't exist`
                 })
             }
         })
@@ -142,9 +142,9 @@ app.put('/item/:id', (req, res) => {
 
 app.get('/item/:id', (req, res) => {
     const { id } = req.params;
+
     db.query(`SELECT * FROM items WHERE id=${id}`, (err, result, field) => {
         if (!err) {
-
             if (result.length > 0) {
                 res.send({
                     success: true,
@@ -165,6 +165,36 @@ app.get('/item/:id', (req, res) => {
                 message: "Internal Server Error"
             })
         }
+    })
+})
+
+app.delete('/item/:id', (req, res) => {
+    const { id } = req.params
+
+    db.query(`SELECT * FROM items WHERE id=${id}`, (err, dataResult, field) => {
+        console.log(dataResult)
+        if (dataResult.length > 0) {
+            db.query(`DELETE FROM items WHERE id=${id}`, (err, result, field) => {
+                if (!err) {
+                    res.send({
+                        success: true,
+                        message: "data has been deleted",
+                        data: null
+                    })
+                } else {
+                    res.status(500).send({
+                        success: false,
+                        message: "Internal Server Error"
+                    })
+                }
+            })
+        } else {
+            res.send({
+                success: false,
+                message: `Data does't exist`
+            })
+        }
+
     })
 })
 
