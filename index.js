@@ -103,6 +103,27 @@ app.get('/item', (req, res) => {
     })
 })
 
+app.put('/item/:id', (req, res) => {
+    const { name, price, description } = req.body
+    const { id } = req.params
+
+    db.query(`UPDATE items SET name ='${name}',price=${price},description='${description}' WHERE id=${id}`, (err, result, field) => {
+        if (!err) {
+            res.send({
+                success: true,
+                message: "data updated !",
+                data: req.body
+            })
+        } else {
+            console.log(err.message)
+            res.status(401).send({
+                success: false,
+                message: "Internal Server Error"
+            })
+        }
+    })
+})
+
 
 
 
