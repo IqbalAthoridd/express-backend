@@ -23,7 +23,7 @@ app.post('/item', (req, res) => {
         })
 
     } else {
-        res.status(401).send({
+        res.status(500).send({
             success: false,
             messgae: 'All field must be filed'
         })
@@ -106,25 +106,67 @@ app.get('/item', (req, res) => {
 app.put('/item/:id', (req, res) => {
     const { name, price, description } = req.body
     const { id } = req.params
+    if (name && price && description) {
+        db.query(`SELECT * FROM ITEMS WHERE id=${id}`, (req, dataItems, field) => {
+            if (dataItems.length > 0) {
+                db.query(`UPDATE items SET name ='${name}',price=${price},description='${description}' WHERE id=${id}`, (err, result, field) => {
+                    if (!err) {
+                        res.send({
+                            success: true,
+                            message: "data updated !",
+                            data: dataItems
+                        })
+                    } else {
+                        console.log(err.message)
+                        res.status(500).send({
+                            success: false,
+                            message: "Internal Server Error"
+                        })
+                    }
+                })
+            } else {
+                res.status(400).send({
+                    success: false,
+                    message: `Data with id ${id} does't exist`
+                })
+            }
+        })
+    } else {
+        res.status(400).send({
+            success: false,
+            message: "All data must be filled"
+        })
+    }
 
-    db.query(`UPDATE items SET name ='${name}',price=${price},description='${description}' WHERE id=${id}`, (err, result, field) => {
+})
+
+app.get('/item/:id', (req, res) => {
+    const { id } = req.params;
+    db.query(`SELECT * FROM items WHERE id=${id}`, (err, result, field) => {
         if (!err) {
-            res.send({
-                success: true,
-                message: "data updated !",
-                data: req.body
-            })
+
+            if (result.length > 0) {
+                res.send({
+                    success: true,
+                    message: "List of Data",
+                    data: result
+                })
+            } else {
+                res.status(404).send({
+                    success: false,
+                    messgae: "Data does't exist"
+                })
+            }
+
         } else {
             console.log(err.message)
-            res.status(401).send({
+            res.status(500).send({
                 success: false,
                 message: "Internal Server Error"
             })
         }
     })
 })
-
-
 
 
 
