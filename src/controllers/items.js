@@ -1,7 +1,7 @@
 const db = require('../helpers/db')
 const qs = require('querystring')
 
-const { getItemModel, createItemModel, updateItemModel, updatePartialModel, deleteItemModel, searchItemModel} = require('../models/items')
+const { getItemModel, createItemModel, updateItemModel, updatePartialModel, deleteItemModel, searchItemModel } = require('../models/items')
 
 module.exports = {
   createItem: (req, res) => {
@@ -66,8 +66,8 @@ module.exports = {
       page = parseInt(page)
     }
     page = (page - 1) * limit
-    db.query(`SELECT * FROM items WHERE ${searchKey} LIKE '%${searchValue}%' LIMIT ${limit} OFFSET ${page}`, (err, result, _fields) => {
-      if (!err) {
+    searchItemModel(searchKey, searchValue, [limit, page], result => {
+      if (result) {
         const pageInfo = {
           count: 0,
           pages: 0,

@@ -27,7 +27,9 @@ module.exports = {
       cb(result)
     })
   },
-  searchItemModel:(searchKey,searchValue,arr,cb)=>{
-    db.query(`SELECT * FROM items WHERE ${searchKey} LIKE '%${searchValue}%' LIMIT ${arr[0]} OFFSET ${arr[1]}`)
-  }
+  searchItemModel: (searchKey, searchValue, arr, cb) => {
+    db.query(`SELECT * FROM items WHERE ${searchKey} LIKE '%${searchValue}%' LIMIT ${arr[0]} OFFSET ${arr[1]}`, (_err, result, _field) => {
+      cb(result)
+    })
+  },
 }
