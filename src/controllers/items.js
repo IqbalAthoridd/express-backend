@@ -1,7 +1,7 @@
 const db = require('../helpers/db')
 const qs = require('querystring')
 
-const { getItemModel, createItemModel } = require('../models/items')
+const { getItemModel, createItemModel, updateItemModel } = require('../models/items')
 
 module.exports = {
   createItem: (req, res) => {
@@ -114,9 +114,9 @@ module.exports = {
     const { name, price, description } = req.body
     const { id } = req.params
     if (name.trim() && price.trim() && description.trim()) {
-      db.query(`SELECT * FROM ITEMS WHERE id=${id}`, (_req, dataItems, _field) => { // Ini optional dan bisa di hapus
-        if (dataItems.length > 0) {
-          db.query(`UPDATE items SET name ='${name}',price=${price},description='${description}' WHERE id=${id}`, (err, result, _field) => {
+      getItemModel(id, dataResult => { // Ini optional dan bisa di hapus
+        if (dataResult.length > 0) {
+          updateItemModel(id, [name, price, description], result => {
             if (result.affectedRows) {
               res.send({
                 success: true,
@@ -128,7 +128,6 @@ module.exports = {
                 }
               })
             } else {
-              console.log(err.message)
               res.status(500).send({
                 success: false,
                 message: 'Internal Server Error'
@@ -136,9 +135,9 @@ module.exports = {
             }
           })
         } else {
-          res.status(500).send({
+          res.status(404).send({
             success: false,
-            message: 'Internal Server Error'
+            message: `Data with id ${id} does't exist`
           })
         }
       })
@@ -157,11 +156,13 @@ module.exports = {
       db.query(`SELECT * FROM items WHERE id=${id}`, (_err, result, _field) => {
         if (result.length) {
           const data = Object.entries(req.body).map(item => {
-            return parseInt(item[1] > 0) ? `${item[0]} = ${item[1]}` : `${item[0]} : '${item[1]}'`
+            return parseInt(item[1] > 0) ? `${item[0]} = ${item[1]}` : `${item[0]} = '${item[1]}'`
           })
           const query = `UPDATE items SET ${data} WHERE id=${id}`
+          console.log(data)
           db.query(query, (_err, result, _field) => {
-            if (result.affectedRows) {
+            console.log()
+            if (result.affectedRows > 0) {
               res.send({
                 success: true,
                 message: `Item ${id} has been updated`
