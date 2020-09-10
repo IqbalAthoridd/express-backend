@@ -26,5 +26,8 @@ module.exports = {
     db.query(`DELETE FROM items WHERE id=${id}`, (_err, result, _field) => {
       cb(result)
     })
+  },
+  searchItemModel:(searchKey,searchValue,arr,cb)=>{
+    db.query(`SELECT * FROM items WHERE ${searchKey} LIKE '%${searchValue}%' LIMIT ${arr[0]} OFFSET ${arr[1]}`)
   }
 }

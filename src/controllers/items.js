@@ -1,7 +1,7 @@
 const db = require('../helpers/db')
 const qs = require('querystring')
 
-const { getItemModel, createItemModel, updateItemModel, updatePartialModel,deleteItemModel } = require('../models/items')
+const { getItemModel, createItemModel, updateItemModel, updatePartialModel, deleteItemModel, searchItemModel} = require('../models/items')
 
 module.exports = {
   createItem: (req, res) => {
