@@ -8,28 +8,33 @@ module.exports = {
     })
   },
   createItemModel: (arr, cb) => {
-    db.query(`INSERT INTO items (name,price,description) VALUES ('${arr[0]}',${arr[1]},'${arr[2]}')`, (_err, result, _field) => {
+    db.query(`INSERT INTO ${table} (name,price,description) VALUES ('${arr[0]}',${arr[1]},'${arr[2]}')`, (_err, result, _field) => {
       cb(result)
     })
   },
   updateItemModel: (id, arr, cb) => {
-    db.query(`UPDATE items SET name ='${arr[0]}',price=${arr[1]},description='${arr[2]}' WHERE id=${id}`, (_err, result, _field) => {
+    db.query(`UPDATE ${table} SET name ='${arr[0]}',price=${arr[1]},description='${arr[2]}' WHERE id=${id}`, (_err, result, _field) => {
       cb(result)
     })
   },
   updatePartialModel: (id, arr, cb) => {
-    db.query(`UPDATE items SET ${arr} WHERE id=${id}`, (_err, result, _field) => {
+    db.query(`UPDATE ${table} SET ${arr} WHERE id=${id}`, (_err, result, _field) => {
       cb(result)
     })
   },
   deleteItemModel: (id, cb) => {
-    db.query(`DELETE FROM items WHERE id=${id}`, (_err, result, _field) => {
+    db.query(`DELETE FROM ${table} WHERE id=${id}`, (_err, result, _field) => {
       cb(result)
     })
   },
   searchItemModel: (searchKey, searchValue, arr, cb) => {
-    db.query(`SELECT * FROM items WHERE ${searchKey} LIKE '%${searchValue}%' LIMIT ${arr[0]} OFFSET ${arr[1]}`, (_err, result, _field) => {
+    db.query(`SELECT * FROM ${table} WHERE ${searchKey} LIKE '%${searchValue}%' LIMIT ${arr[0]} OFFSET ${arr[1]}`, (_err, result, _field) => {
       cb(result)
     })
   },
+  countGetItemModel: (arr, cb) => {
+    db.query(`SELECT COUNT (*) as count FROM ${table} WHERE ${arr[0]} LIKE '%${arr[1]}%'`, (_err, result, _field) => {
+      cb(result)
+    })
+  }
 }

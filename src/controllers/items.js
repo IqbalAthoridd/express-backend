@@ -1,7 +1,6 @@
-const db = require('../helpers/db')
 const qs = require('querystring')
 
-const { getItemModel, createItemModel, updateItemModel, updatePartialModel, deleteItemModel, searchItemModel } = require('../models/items')
+const { getItemModel, createItemModel, updateItemModel, updatePartialModel, deleteItemModel, searchItemModel, countGetItemModel } = require('../models/items')
 
 module.exports = {
   createItem: (req, res) => {
@@ -77,7 +76,7 @@ module.exports = {
           prevLink: null
         }
         if (result.length) {
-          db.query(`SELECT COUNT (*) as count FROM items WHERE ${searchKey} LIKE '%${searchValue}%'`, (_err, data, _field) => {
+          countGetItemModel([searchKey, searchValue], data => {
             const { count } = data[0]
             pageInfo.count = count
             pageInfo.pages = Math.ceil(count / limit)
