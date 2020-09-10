@@ -13,7 +13,15 @@ module.exports = {
     })
   },
   updateItemModel: (id, arr, cb) => {
+    // if(arr.length<3){
+    //   // db.query(`UPDATE items SET ${arr} WHERE id=${id})
+    // }
     db.query(`UPDATE items SET name ='${arr[0]}',price=${arr[1]},description='${arr[2]}' WHERE id=${id}`, (_err, result, _field) => {
+      cb(result)
+    })
+  },
+  updatePartialModel: (id, arr, cb) => {
+    db.query(`UPDATE items SET ${arr} WHERE id=${id}`, (_err, result, _field) => {
       cb(result)
     })
   }

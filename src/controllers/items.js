@@ -1,7 +1,7 @@
 const db = require('../helpers/db')
 const qs = require('querystring')
 
-const { getItemModel, createItemModel, updateItemModel } = require('../models/items')
+const { getItemModel, createItemModel, updateItemModel, updatePartialModel } = require('../models/items')
 
 module.exports = {
   createItem: (req, res) => {
@@ -114,7 +114,7 @@ module.exports = {
     const { name, price, description } = req.body
     const { id } = req.params
     if (name.trim() && price.trim() && description.trim()) {
-      getItemModel(id, dataResult => { // Ini optional dan bisa di hapus
+      getItemModel(id, dataResult => {
         if (dataResult.length > 0) {
           updateItemModel(id, [name, price, description], result => {
             if (result.affectedRows) {
@@ -153,14 +153,12 @@ module.exports = {
     const { name = '', price = '', description = '' } = req.body
 
     if (name.trim() || price.trim() || description.trim()) {
-      db.query(`SELECT * FROM items WHERE id=${id}`, (_err, result, _field) => {
+      getItemModel(id, result => {
         if (result.length) {
           const data = Object.entries(req.body).map(item => {
             return parseInt(item[1] > 0) ? `${item[0]} = ${item[1]}` : `${item[0]} = '${item[1]}'`
           })
-          const query = `UPDATE items SET ${data} WHERE id=${id}`
-          console.log(data)
-          db.query(query, (_err, result, _field) => {
+          updatePartialModel(id, data, result => {
             console.log()
             if (result.affectedRows > 0) {
               res.send({
