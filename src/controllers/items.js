@@ -184,7 +184,7 @@ module.exports = {
 
   deleteItem: (req, res) => {
     const { id } = req.params
-    db.query(`SELECT * FROM items WHERE id=${id}`, (_err, dataResult) => {
+    getItemModel(id, dataResult => {
       if (dataResult.length > 0) {
         db.query(`DELETE FROM items WHERE id=${id}`, (err, result, field) => {
           if (!err) {
