@@ -22,7 +22,7 @@ module.exports = {
       cb(result)
     })
   },
-  deleteItem: (id, cb) => {
+  deleteItemModel: (id, cb) => {
     db.query(`DELETE FROM items WHERE id=${id}`, (_err, result, _field) => {
       cb(result)
     })

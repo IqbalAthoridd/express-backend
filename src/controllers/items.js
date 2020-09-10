@@ -1,7 +1,7 @@
 const db = require('../helpers/db')
 const qs = require('querystring')
 
-const { getItemModel, createItemModel, updateItemModel, updatePartialModel } = require('../models/items')
+const { getItemModel, createItemModel, updateItemModel, updatePartialModel,deleteItemModel } = require('../models/items')
 
 module.exports = {
   createItem: (req, res) => {
@@ -99,7 +99,7 @@ module.exports = {
         } else {
           res.send({
             success: false,
-            message: 'tidak ada item'
+            message: 'Data not found'
           })
         }
       } else {
@@ -186,8 +186,9 @@ module.exports = {
     const { id } = req.params
     getItemModel(id, dataResult => {
       if (dataResult.length > 0) {
-        db.query(`DELETE FROM items WHERE id=${id}`, (err, result, field) => {
-          if (!err) {
+        deleteItemModel(id, result => {
+          console.log(result)
+          if (result.affectedRows > 0) {
             res.send({
               success: true,
               message: 'data has been deleted',
@@ -203,7 +204,7 @@ module.exports = {
       } else {
         res.status(404).send({
           success: false,
-          message: 'Data does\'t exist'
+          message: `Data with id ${id} does't exist`
         })
       }
     })
