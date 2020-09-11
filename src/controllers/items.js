@@ -51,7 +51,7 @@ module.exports = {
     if (typeof sortBy === 'object') {
       // if(Object.keys(sortBy)[0])
       sortName = Object.keys(sortBy)[0]
-      sortValue = +Object.values(sortBy)[0]
+      sortValue = Object.values(sortBy)[0]
     }
 
     if (typeof search === 'object') {
@@ -73,7 +73,13 @@ module.exports = {
       page = parseInt(page)
     }
     page = (page - 1) * limit
-    searchItemModel([searchKey, searchValue], [limit, page], [sortName, sortValue], result => {
+
+    let sort = `HAVING ${sortName} = ${sortValue}`
+    if (sortBy === undefined) {
+      sort = ''
+    }
+
+    searchItemModel([searchKey, searchValue], [limit, page], sort, result => {
       if (result) {
         const pageInfo = {
           count: 0,
@@ -110,7 +116,6 @@ module.exports = {
           })
         }
       } else {
-        
         res.status(500).send({
           success: false,
           messgae: 'Internal Server Error'
@@ -167,7 +172,7 @@ module.exports = {
             return parseInt(item[1] > 0) ? `${item[0]} = ${item[1]}` : `${item[0]} = '${item[1]}'`
           })
           updatePartialModel(id, data, result => {
-            console.log()
+            
             if (result.affectedRows > 0) {
               res.send({
                 success: true,
@@ -195,7 +200,7 @@ module.exports = {
     getItemModel(id, dataResult => {
       if (dataResult.length > 0) {
         deleteItemModel(id, result => {
-          console.log(result)
+          
           if (result.affectedRows > 0) {
             res.send({
               success: true,

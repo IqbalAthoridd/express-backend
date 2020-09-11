@@ -28,8 +28,7 @@ module.exports = {
     })
   },
   searchItemModel: (Search, arr, sort, cb) => {
-    db.query(`SELECT * FROM ${table} WHERE ${Search[0]} LIKE '%${Search[1]}%' HAVING ${sort[0]} = ${sort[1]} ORDER BY price LIMIT ${arr[0]} OFFSET ${arr[1]}`, (_err, result, _field) => {
-      console.log(_err)
+    db.query(`SELECT * FROM ${table} WHERE ${Search[0]} LIKE '%${Search[1]}%' ${sort} ORDER BY price LIMIT ${arr[0]} OFFSET ${arr[1]}`, (_err, result, _field) => {
       cb(result)
     })
   },
