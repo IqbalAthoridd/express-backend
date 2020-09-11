@@ -1,8 +1,7 @@
 const Joi = require('@hapi/joi')
 
 const categorySchema = Joi.object({
-  id: Joi.number().required(),
-  name: Joi.string().required()
+  name: Joi.string().min(4).required()
 })
 
 module.exports = {
