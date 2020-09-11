@@ -46,7 +46,7 @@ module.exports = {
     let searchKey = ''
     let searchValue = ''
     let sortName = ''
-    let sortValue = 0
+    let sortValue = ''
 
     if (typeof sortBy === 'object') {
       // if(Object.keys(sortBy)[0])
@@ -90,7 +90,8 @@ module.exports = {
           prevLink: null
         }
         if (result.length) {
-          countGetItemModel([searchKey, searchValue], data => {
+          countGetItemModel([searchKey, searchValue], sort, data => {
+            console.log(data)
             const { count } = data[0]
             pageInfo.count = count
             pageInfo.pages = Math.ceil(count / limit)
@@ -172,7 +173,6 @@ module.exports = {
             return parseInt(item[1] > 0) ? `${item[0]} = ${item[1]}` : `${item[0]} = '${item[1]}'`
           })
           updatePartialModel(id, data, result => {
-            
             if (result.affectedRows > 0) {
               res.send({
                 success: true,
@@ -200,7 +200,6 @@ module.exports = {
     getItemModel(id, dataResult => {
       if (dataResult.length > 0) {
         deleteItemModel(id, result => {
-          
           if (result.affectedRows > 0) {
             res.send({
               success: true,

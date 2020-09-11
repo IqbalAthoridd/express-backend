@@ -32,8 +32,9 @@ module.exports = {
       cb(result)
     })
   },
-  countGetItemModel: (arr, cb) => {
-    db.query(`SELECT COUNT (*) as count FROM ${table} WHERE ${arr[0]} LIKE '%${arr[1]}%'`, (_err, result, _field) => {
+  countGetItemModel: (arr, sort, cb) => {
+    db.query(`SELECT COUNT('*') as count FROM (SELECT * FROM ${table} WHERE ${arr[0]} LIKE '%${arr[1]}%' ${sort}) as table1`, (_err, result, _field) => {
+      console.log(_err)
       cb(result)
     })
   }
