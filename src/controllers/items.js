@@ -4,9 +4,9 @@ const { getItemModel, createItemModel, updateItemModel, updatePartialModel, dele
 
 module.exports = {
   createItem: (req, res) => {
-    const { name, price, description } = req.body
-    if (name && price && description) {
-      createItemModel([name, price, description], result => {
+    const { name, price, description, category } = req.body
+    if (name && price && description && category) {
+      createItemModel([name, price, description, category], result => {
         res.status(201).send({
           success: true,
           message: 'Item has been created',
