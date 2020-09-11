@@ -42,9 +42,17 @@ module.exports = {
     })
   },
   getItem: (req, res) => {
-    let { page, limit, search } = req.query
+    let { page, limit, search, sortBy } = req.query
     let searchKey = ''
     let searchValue = ''
+    let sortName = ''
+    let sortValue = 0
+
+    if (typeof sortBy === 'object') {
+      // if(Object.keys(sortBy)[0])
+      sortName = Object.keys(sortBy)[0]
+      sortValue = +Object.values(sortBy)[0]
+    }
 
     if (typeof search === 'object') {
       searchKey = Object.keys(search)[0]
@@ -65,7 +73,7 @@ module.exports = {
       page = parseInt(page)
     }
     page = (page - 1) * limit
-    searchItemModel(searchKey, searchValue, [limit, page], result => {
+    searchItemModel([searchKey, searchValue], [limit, page], [sortName, sortValue], result => {
       if (result) {
         const pageInfo = {
           count: 0,
@@ -102,6 +110,7 @@ module.exports = {
           })
         }
       } else {
+        
         res.status(500).send({
           success: false,
           messgae: 'Internal Server Error'
