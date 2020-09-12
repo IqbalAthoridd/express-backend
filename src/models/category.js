@@ -17,7 +17,7 @@ module.exports = {
       cb(result)
     })
   },
-  getAllCategoryModel: (name,arr, cb) => {
+  getAllCategoryModel: (name, arr, cb) => {
     db.query(`SELECT * FROM category WHERE name LIKE '%${name}%' LIMIT ${arr[0]} OFFSET ${arr[1]}`, (_err, result, _field) => {
       cb(result)
     })

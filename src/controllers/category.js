@@ -3,7 +3,6 @@ const qs = require('querystring')
 const { categorySchema } = require('../helpers/validation_schema')
 
 const { getCategorModel, createCategoryModel, deleteCategoryModel, getAllCategoryModel, countGetCategoryModel } = require('../models/category')
-const { required } = require('@hapi/joi')
 
 module.exports = {
   createCategory: async (req, res) => {
