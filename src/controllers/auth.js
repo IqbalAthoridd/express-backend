@@ -11,6 +11,9 @@ module.exports = {
       const salt = 10
       data.password = await bcrypt.hash(data.password, salt)
       getUserModel(data.email, dataResult => {
+        if (!dataResult.length) {
+          dataResult = [{ email: '' }]
+        }
         if (dataResult[0].email !== data.email) {
           creteUserModel(data, result => {
             if (result.affectedRows > 0) {
