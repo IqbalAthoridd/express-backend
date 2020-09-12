@@ -18,12 +18,19 @@ module.exports = {
     })
   },
   getAllCategoryModel: (name, arr, cb) => {
-    db.query(`SELECT * FROM category WHERE name LIKE '%${name}%' LIMIT ${arr[0]} OFFSET ${arr[1]}`, (_err, result, _field) => {
-      cb(result)
-    })
+    db.query(`SELECT * FROM category WHERE name LIKE '%${name}%' LIMIT ${arr[0]} OFFSET ${arr[1]}`
+      , (_err, result, _field) => {
+        cb(result)
+      })
   },
   countGetCategoryModel: (name, cb) => {
-    db.query(`SELECT COUNT('*') as count FROM ${table} WHERE name LIKE '%${name}%'`, (_err, result, _field) => {
+    db.query(`SELECT COUNT('*') as count FROM ${table} WHERE name LIKE '%${name}%'`
+      , (_err, result, _field) => {
+        cb(result)
+      })
+  },
+  updateCategoryModel: (id, name, cb) => {
+    db.query(`UPDATE ${table} SET name ='${name}' WHERE id=${id}`, (_err, result, _field) => {
       cb(result)
     })
   }

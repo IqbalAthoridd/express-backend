@@ -1,6 +1,14 @@
 const qs = require('querystring')
 
-const { getItemModel, createItemModel, updateItemModel, updatePartialModel, deleteItemModel, searchItemModel, countGetItemModel } = require('../models/items')
+const {
+  getItemModel,
+  createItemModel,
+  updateItemModel,
+  updatePartialModel,
+  deleteItemModel,
+  searchItemModel,
+  countGetItemModel
+} = require('../models/items')
 
 module.exports = {
   createItem: (req, res) => {
@@ -11,7 +19,7 @@ module.exports = {
           success: true,
           message: 'Item has been created',
           data: {
-            id: result.insertId,
+            // id: result.insertId,
             ...req.body
           }
         })

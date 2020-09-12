@@ -2,7 +2,14 @@ const qs = require('querystring')
 
 const { categorySchema } = require('../helpers/validation_schema')
 
-const { getCategorModel, createCategoryModel, deleteCategoryModel, getAllCategoryModel, countGetCategoryModel } = require('../models/category')
+const {
+  getCategorModel,
+  createCategoryModel,
+  deleteCategoryModel,
+  getAllCategoryModel,
+  countGetCategoryModel,
+  updateCategoryModel
+} = require('../models/category')
 
 module.exports = {
   createCategory: async (req, res) => {
@@ -30,7 +37,7 @@ module.exports = {
       })
     }
   },
-  getCategoryById: (req, res) => {
+  getCategory: (req, res) => {
     const { id } = req.params
 
     getCategorModel(id, result => {
@@ -48,7 +55,7 @@ module.exports = {
       }
     })
   },
-  deleteCategoryById: (req, res) => {
+  deleteCategory: (req, res) => {
     const { id } = req.params
     deleteCategoryModel(id, result => {
       if (result.affectedRows > 0) {
@@ -109,5 +116,31 @@ module.exports = {
         }
       }
     })
+  },
+  updateCategory: async (req, res) => {
+    try {
+      const { id } = req.params
+      const { name } = req.body
+      const data = await categorySchema.validateAsync({ name })
+      updateCategoryModel(id, data, result => {
+        if (result.affectedRows > 0) {
+          res.send({
+            success: true,
+            message: 'Data updated',
+            data: { id, name }
+          })
+        } else {
+          res.send({
+            success: false,
+            message: `Data with id ${id} does't exist`
+          })
+        }
+      })
+    } catch (err) {
+      res.send({
+        success: false,
+        message: err.message
+      })
+    }
   }
 }
