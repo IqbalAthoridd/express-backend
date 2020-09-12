@@ -12,7 +12,7 @@ module.exports = {
     })
   },
   getCartModel: (cb) => {
-    db.query('SELECT name, price, price * total as Summary FROM items INNER JOIN cart ON items.id = cart.itemId '
+    db.query('SELECT name, total, price, price * total as Summary FROM items INNER JOIN cart ON items.id = cart.itemId '
       , (_err, result, _field) => {
         cb(result)
       })
