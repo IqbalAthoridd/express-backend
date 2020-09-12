@@ -28,5 +28,23 @@ module.exports = {
         message: err.message
       })
     }
+  },
+  getCategoryById: (req, res) => {
+    const { id } = req.params
+
+    getCategorModel(id, result => {
+      if (result.length) {
+        res.send({
+          success: true,
+          message: 'Category data',
+          data: result
+        })
+      } else {
+        res.send({
+          success: false,
+          message: `Data with id ${id} does't exist`
+        })
+      }
+    })
   }
 }
