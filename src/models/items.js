@@ -27,14 +27,13 @@ module.exports = {
       cb(result)
     })
   },
-  searchItemModel: (Search, arr, sort, cb) => {
-    db.query(`SELECT * FROM ${table} WHERE ${Search[0]} LIKE '%${Search[1]}%' ${sort} ORDER BY price LIMIT ${arr[0]} OFFSET ${arr[1]}`, (_err, result, _field) => {
+  searchItemModel: (Search, arr, sort, sortTo, sortTime, price = 0, cb) => {
+    db.query(`SELECT * FROM (SELECT * FROM ${table} WHERE ${Search[0]} LIKE '%${Search[1]}%' ${sort} ORDER BY price ${sortTo} LIMIT ${arr[0]} OFFSET ${arr[1]}) AS tabel HAVING price >= ${price} ${sortTime} `, (_err, result, _field) => {
       cb(result)
     })
   },
   countGetItemModel: (arr, sort, cb) => {
     db.query(`SELECT COUNT('*') as count FROM (SELECT * FROM ${table} WHERE ${arr[0]} LIKE '%${arr[1]}%' ${sort}) as table1`, (_err, result, _field) => {
-      console.log(_err)
       cb(result)
     })
   }

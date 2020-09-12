@@ -11,7 +11,7 @@ module.exports = {
           success: true,
           message: 'Item has been created',
           data: {
-            id: result.id,
+            id: result.insertId,
             ...req.body
           }
         })
@@ -42,11 +42,21 @@ module.exports = {
     })
   },
   getItem: (req, res) => {
-    let { page, limit, search, sortBy } = req.query
+    let { page, limit, search, sortBy, sortTo = 'ASC', sortTime, price = 0 } = req.query
     let searchKey = ''
     let searchValue = ''
     let sortName = ''
     let sortValue = ''
+
+    if (price === '') {
+      price = 0
+    }
+
+    if (sortTime === undefined) {
+      sortTime = ''
+    } else {
+      sortTime = `ORDER BY create_at ${sortTime}`
+    }
 
     if (typeof sortBy === 'object') {
       // if(Object.keys(sortBy)[0])
@@ -79,7 +89,7 @@ module.exports = {
       sort = ''
     }
 
-    searchItemModel([searchKey, searchValue], [limit, page], sort, result => {
+    searchItemModel([searchKey, searchValue], [limit, page], sort, sortTo, sortTime, price, result => {
       if (result) {
         const pageInfo = {
           count: 0,
@@ -91,7 +101,6 @@ module.exports = {
         }
         if (result.length) {
           countGetItemModel([searchKey, searchValue], sort, data => {
-            console.log(data)
             const { count } = data[0]
             pageInfo.count = count
             pageInfo.pages = Math.ceil(count / limit)
