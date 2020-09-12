@@ -1,7 +1,7 @@
 const db = require('../helpers/db')
 const { categorySchema } = require('../helpers/validation_schema')
 
-const { getCategorModel, createCategoryModel } = require('../models/category')
+const { getCategorModel, createCategoryModel, deleteCategoryModel } = require('../models/category')
 
 module.exports = {
   createCategory: async (req, res) => {
@@ -38,6 +38,22 @@ module.exports = {
           success: true,
           message: 'Category data',
           data: result
+        })
+      } else {
+        res.send({
+          success: false,
+          message: `Data with id ${id} does't exist`
+        })
+      }
+    })
+  },
+  deleteCategoryById: (req, res) => {
+    const { id } = req.params
+    deleteCategoryModel(id, result => {
+      if (result.affectedRows > 0) {
+        res.send({
+          success: true,
+          message: 'Category has deleted'
         })
       } else {
         res.send({
