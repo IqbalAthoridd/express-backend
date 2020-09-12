@@ -16,5 +16,15 @@ module.exports = {
     db.query(`DELETE FROM ${table} WHERE id=${id}`, (_err, result, _field) => {
       cb(result)
     })
+  },
+  getAllCategoryModel: (name,arr, cb) => {
+    db.query(`SELECT * FROM category WHERE name LIKE '%${name}%' LIMIT ${arr[0]} OFFSET ${arr[1]}`, (_err, result, _field) => {
+      cb(result)
+    })
+  },
+  countGetCategoryModel: (name, cb) => {
+    db.query(`SELECT COUNT('*') as count FROM ${table} WHERE name LIKE '%${name}%'`, (_err, result, _field) => {
+      cb(result)
+    })
   }
 }
