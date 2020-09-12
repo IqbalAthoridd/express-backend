@@ -16,6 +16,11 @@ module.exports = {
       , (_err, result, _field) => {
         cb(result)
       })
+  },
+  deleteCartModel: (id, cb) => {
+    db.query(`DELETE FROM cart WHERE cartId = ${id}`, (_err, result, _field) => {
+      cb(result)
+    })
   }
 
 }
