@@ -1,4 +1,4 @@
-const { createCartModel, getCartItemModel } = require('../models/cart')
+const { createCartModel, getCartItemModel, getCartModel } = require('../models/cart')
 
 module.exports = {
   createCart: (req, res) => {
@@ -30,6 +30,22 @@ module.exports = {
         res.send({
           success: false,
           message: 'Item alredy added on cart'
+        })
+      }
+    })
+  },
+  getCart: (req, res) => {
+    getCartModel(result => {
+      if (result.length) {
+        res.send({
+          success: true,
+          message: 'List of Cart',
+          data: result
+        })
+      } else {
+        res.send({
+          success: false,
+          message: 'Cart empty'
         })
       }
     })
