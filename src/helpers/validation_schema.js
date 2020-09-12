@@ -5,11 +5,12 @@ const categorySchema = Joi.object({
 })
 
 const registerSchema = Joi.object({
-  name: Joi.string.min(4).max(20).required(),
+  name: Joi.string().min(4).max(20).required(),
   email: Joi.string().lowercase().min(5).email().required(),
   password: Joi.string().min(8).required()
 })
 
 module.exports = {
-  categorySchema
+  categorySchema,
+  registerSchema
 }
