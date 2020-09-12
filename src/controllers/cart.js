@@ -1,4 +1,4 @@
-const { createCartModel, getCartItemModel, getCartModel } = require('../models/cart')
+const { createCartModel, getCartItemModel, getCartModel, deleteCartModel } = require('../models/cart')
 
 module.exports = {
   createCart: (req, res) => {
@@ -46,6 +46,22 @@ module.exports = {
         res.send({
           success: false,
           message: 'Cart empty'
+        })
+      }
+    })
+  },
+  deleteCart: (req, res) => {
+    const { id } = req.params
+    deleteCartModel(id, result => {
+      if (result.affectedRows > 0) {
+        res.send({
+          success: true,
+          message: 'cart deleted'
+        })
+      } else {
+        res.send({
+          success: false,
+          message: `Data with id ${id} does't exist`
         })
       }
     })
