@@ -39,5 +39,35 @@ module.exports = {
         message: err.message
       })
     }
+  },
+  authLogin: (req, res) => {
+    const { email, password } = req.body
+    getUserModel(email, async (result) => {
+      if (result.length) {
+        const { userId, name, email } = result[0]
+        const data = await bcrypt.compare(password, result[0].password)
+        if (data) {
+          res.send({
+            success: true,
+            message: 'Login Succes',
+            data: {
+              userId,
+              name,
+              email
+            }
+          })
+        } else {
+          res.send({
+            success: false,
+            message: 'Invalid email or password'
+          })
+        }
+      } else {
+        res.send({
+          success: false,
+          message: 'Invalid email or password'
+        })
+      }
+    })
   }
 }
