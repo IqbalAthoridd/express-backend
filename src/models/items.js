@@ -7,9 +7,9 @@ module.exports = {
       cb(result)
     })
   },
-  createItemModel: (arr, cb) => {
+  createItemModel: (data, cb) => {
     db.query(`INSERT INTO ${table} (name,price,description,category) VALUES 
-    ("${arr[0]}",${arr[1]},"${arr[2]}",${arr[3]})`, (_err, result, _field) => {
+    ("${data.name}",${data.price},"${data.description}",${data.category})`, (_err, result, _field) => {
       cb(result)
     })
   },
