@@ -1,8 +1,9 @@
 const db = require('../helpers/db')
 const table = 'users'
 module.exports = {
-  creteUserModel: async (data, cb) => {
-    db.query(`INSERT INTO ${table} (name,email,password,phoneNumber) VALUES ("${data.name}","${data.email}","${data.password}","${data.phoneNumber}")`, (_err, result, _field) => {
+  creteUserModel: async (data, image, cb) => {
+    db.query(`INSERT INTO ${table} (name,email,password,phoneNumber,image) VALUES ("${data.name}","${data.email}","${data.password}"
+    ,"${data.phoneNumber}","${image}")`, (_err, result, _field) => {
       console.log(_err)
       cb(result)
     })
@@ -17,8 +18,8 @@ module.exports = {
       cb(result)
     })
   },
-  updateUserModel: (id, arr, cb) => {
-    db.query(`UPDATE ${table} SET ${arr} WHERE userId=${id}`, (_err, result, _field) => {
+  updateUserModel: (id, arr, data, cb) => {
+    db.query(`UPDATE ${table} SET ${arr}${data[1]}${data[0]} WHERE userId=${id}`, (_err, result, _field) => {
       cb(result)
     })
   }
