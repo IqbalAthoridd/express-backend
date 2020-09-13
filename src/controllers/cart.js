@@ -1,4 +1,10 @@
-const { createCartModel, getCartItemModel, getCartModel, deleteCartModel } = require('../models/cart')
+const {
+  createCartModel,
+  getCartItemModel,
+  getCartModel,
+  deleteCartModel,
+  updateTotalModel
+} = require('../models/cart')
 
 module.exports = {
   createCart: (req, res) => {
@@ -62,6 +68,23 @@ module.exports = {
         res.send({
           success: false,
           message: `Data with id ${id} does't exist`
+        })
+      }
+    })
+  },
+  UpdateTotalItem: (req, res) => {
+    const { id } = req.params
+    const { total } = req.body
+    updateTotalModel(id, total, result => {
+      if (result.affectedRows > 0) {
+        res.send({
+          success: true,
+          message: 'Cart Updated'
+        })
+      } else {
+        res.send({
+          success: false,
+          message: 'Internal Server Error'
         })
       }
     })
