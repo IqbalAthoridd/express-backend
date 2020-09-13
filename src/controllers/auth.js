@@ -1,7 +1,7 @@
-const { registerSchema } = require('../helpers/validation_schema')
+const { registerSchema, updateSchema } = require('../helpers/validation_schema')
 const bcrypt = require('bcrypt')
 
-const { creteUserModel, getUserModel } = require('../models/auth')
+const { creteUserModel, getUserModel, updateUserModel } = require('../models/auth')
 
 module.exports = {
   authRegister: async (req, res) => {
@@ -78,5 +78,36 @@ module.exports = {
         })
       }
     })
+  },
+  editUser: async (req, res) => {
+    try {
+      const { id } = req.params
+      let data = await updateSchema.validateAsync({ ...req.body })
+      data = Object.entries(data).map(data => {
+        return data[1] > 0 ? `${data[0]} = '${data[1]}'` : `${data[0]} = '${data[1]}'`
+      })
+
+      updateUserModel(id, data, result => {
+        if (result === undefined) {
+          result = { affectedRows: 0 }
+        }
+        if (result.affectedRows > 0) {
+          res.send({
+            success: true,
+            message: 'Data updated'
+          })
+        } else {
+          res.send({
+            success: false,
+            message: 'Data not updated'
+          })
+        }
+      })
+    } catch (err) {
+      res.send({
+        success: false,
+        message: err.message
+      })
+    }
   }
 }
