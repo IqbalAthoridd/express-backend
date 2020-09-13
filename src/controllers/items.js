@@ -149,22 +149,18 @@ module.exports = {
         }
       })
   },
-  updateItem: (req, res) => {
-    const { name, price, description } = req.body
-    const { id } = req.params
-    if (name.trim() && price.trim() && description.trim()) {
+  updateItem: async (req, res) => {
+    try {
+      const { id } = req.params
+      const data = await createItemSchema.validateAsync({ ...req.body })
       getItemModel(id, dataResult => {
         if (dataResult.length > 0) {
-          updateItemModel(id, [name, price, description], result => {
+          updateItemModel(id, data, result => {
             if (result.affectedRows) {
               res.send({
                 success: true,
                 message: 'data updated !',
-                data: {
-                  name,
-                  price,
-                  description
-                }
+                data: data
               })
             } else {
               res.status(500).send({
@@ -180,10 +176,10 @@ module.exports = {
           })
         }
       })
-    } else {
-      res.status(400).send({
+    } catch (err) {
+      res.send({
         success: false,
-        message: 'All data must be filled'
+        message: err.message
       })
     }
   },
