@@ -41,7 +41,8 @@ module.exports = {
     })
   },
   getCart: (req, res) => {
-    getCartModel(result => {
+    const { id } = req.params
+    getCartModel(id, result => {
       if (result.length) {
         res.send({
           success: true,
