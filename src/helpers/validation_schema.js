@@ -7,7 +7,8 @@ const categorySchema = Joi.object({
 const registerSchema = Joi.object({
   name: Joi.string().min(4).max(20).required(),
   email: Joi.string().lowercase().min(5).email().required(),
-  password: Joi.string().min(8).required()
+  password: Joi.string().min(8).required(),
+  phoneNumber: Joi.string().max(13).min(10).required()
 })
 
 module.exports = {
