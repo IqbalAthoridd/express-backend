@@ -1,5 +1,6 @@
 const qs = require('querystring')
 const { createItemSchema } = require('../helpers/validation_schema')
+const { upload } = require('../helpers/init_multer')
 
 const {
   getItemModel,
@@ -8,37 +9,58 @@ const {
   updatePartialModel,
   deleteItemModel,
   searchItemModel,
-  countGetItemModel
+  countGetItemModel,
+  createImageModel
 } = require('../models/items')
 
 module.exports = {
   createItem: async (req, res) => {
-    try {
-      const data = await createItemSchema.validateAsync({ ...req.body })
-      createItemModel(data, result => {
-        if (result.affectedRows > 0) {
-          res.status(201).send({
-            success: true,
-            message: 'Item has been created',
-            data: {
-              id: result.insertId,
-              ...req.body
-            }
-          })
-        } else {
+    upload(req, res, async (_err) => {
+      try {
+        if (req.files.length < 4 || !req.files === undefined) {
           res.send({
             success: false,
-            message: 'Internal server Error'
+            messgae: 'Image Must be 4'
+          })
+        } else {
+          const images = req.files.map(data => data.filename)
+          const data = await createItemSchema.validateAsync({ ...req.body })
+          createImageModel(images, result => {
+            if (result.affectedRows > 0) {
+              createItemModel(data, result.insertId, dataResult => {
+                if (dataResult.affectedRows > 0) {
+                  res.status(201).send({
+                    success: true,
+                    message: 'Item has been created',
+                    data: {
+                      id: result.insertId,
+                      ...req.body
+                    }
+                  })
+                } else {
+                  res.send({
+                    success: false,
+                    message: 'Internal server Error'
+                  })
+                }
+              })
+            } else {
+              res.send({
+                success: false,
+                messgae: 'Internal server Error'
+              })
+            }
           })
         }
-      })
-    } catch (err) {
-      res.send({
-        success: false,
-        message: err.message
-      })
-    }
+      } catch (err) {
+        res.send({
+          success: false,
+          message: err.message
+        })
+      }
+    })
   },
+
   getDetailItem: (req, res) => {
     const { id } = req.params
 
@@ -242,5 +264,7 @@ module.exports = {
       }
     })
   }
+  // uploadItemImages:(req,res)=>
+  // upload(req,res,err=>)
 
 }
