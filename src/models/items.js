@@ -7,9 +7,10 @@ module.exports = {
       cb(result)
     })
   },
-  createItemModel: (data, cb) => {
-    db.query(`INSERT INTO ${table} (name,price,description,category) VALUES 
-    ("${data.name}",${data.price},"${data.description}",${data.category})`, (_err, result, _field) => {
+  createItemModel: (data, imageId, cb) => {
+    db.query(`INSERT INTO ${table} (name,price,description,image,category) VALUES 
+    ("${data.name}",${data.price},"${data.description}",${imageId},${data.category})`, (_err, result, _field) => {
+      console.log(_err)
       cb(result)
     })
   },
@@ -39,6 +40,12 @@ module.exports = {
   countGetItemModel: (arr, sort, cb) => {
     db.query(`SELECT COUNT('*') as count FROM (SELECT * FROM ${table} WHERE ${arr[0]} 
       LIKE '%${arr[1]}%' ${sort}) as table1`, (_err, result, _field) => {
+      cb(result)
+    })
+  },
+  createImageModel: (arr, cb) => {
+    db.query(`INSERT INTO imageItems (image1,image2,image3,image4) VALUES
+    ("${arr[0]}","${arr[1]}","${arr[2]}","${arr[3]}")`, (_err, result, _field) => {
       cb(result)
     })
   }
