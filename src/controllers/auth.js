@@ -12,7 +12,13 @@ module.exports = {
       data.password = await bcrypt.hash(data.password, salt)
       getUserModel(data.email, dataResult => {
         if (!dataResult.length) {
-          dataResult = [{ email: '' }]
+          dataResult = [{ email: '', phoneNumber: '' }]
+        }
+        if (dataResult[0].phoneNumber === data.phoneNumber) {
+          res.send({
+            success: false,
+            message: 'Phone number already use'
+          })
         }
         if (dataResult[0].email !== data.email) {
           creteUserModel(data, result => {
