@@ -1,4 +1,5 @@
 const qs = require('querystring')
+const { createItemSchema } = require('../helpers/validation_schema')
 
 const {
   getItemModel,
@@ -11,23 +12,30 @@ const {
 } = require('../models/items')
 
 module.exports = {
-  createItem: (req, res) => {
-    const { name, price, description, category } = req.body
-    if (name && price && description && category) {
-      createItemModel([name, price, description, category], result => {
-        res.status(201).send({
-          success: true,
-          message: 'Item has been created',
-          data: {
-            // id: result.insertId,
-            ...req.body
-          }
-        })
+  createItem: async (req, res) => {
+    try {
+      const data = await createItemSchema.validateAsync({ ...req.body })
+      createItemModel(data, result => {
+        if (result.affectedRows > 0) {
+          res.status(201).send({
+            success: true,
+            message: 'Item has been created',
+            data: {
+              id: result.insertId,
+              ...req.body
+            }
+          })
+        } else {
+          res.send({
+            success: false,
+            message: 'Internal server Error'
+          })
+        }
       })
-    } else {
+    } catch (err) {
       res.send({
         success: false,
-        message: 'All field must be filled'
+        message: err.message
       })
     }
   },
@@ -67,7 +75,6 @@ module.exports = {
     }
 
     if (typeof sortBy === 'object') {
-      // if(Object.keys(sortBy)[0])
       sortName = Object.keys(sortBy)[0]
       sortValue = Object.values(sortBy)[0]
     }
@@ -97,49 +104,50 @@ module.exports = {
       sort = ''
     }
 
-    searchItemModel([searchKey, searchValue], [limit, page], sort, sortTo, sortTime, price, result => {
-      if (result) {
-        const pageInfo = {
-          count: 0,
-          pages: 0,
-          currentPage: page,
-          limitPerPage: limit,
-          nextLink: null,
-          prevLink: null
-        }
-        if (result.length) {
-          countGetItemModel([searchKey, searchValue], sort, data => {
-            const { count } = data[0]
-            pageInfo.count = count
-            pageInfo.pages = Math.ceil(count / limit)
-            const { pages, currentPage } = pageInfo
-            if (currentPage < pages) {
-              pageInfo.nextLink = `http://localhost:8080/items?${qs.stringify({ ...req.query, ...{ page: page + 1 } })}`
-            }
+    searchItemModel([searchKey, searchValue], [limit, page], sort, sortTo,
+      sortTime, price, result => {
+        if (result) {
+          const pageInfo = {
+            count: 0,
+            pages: 0,
+            currentPage: page,
+            limitPerPage: limit,
+            nextLink: null,
+            prevLink: null
+          }
+          if (result.length) {
+            countGetItemModel([searchKey, searchValue], sort, data => {
+              const { count } = data[0]
+              pageInfo.count = count
+              pageInfo.pages = Math.ceil(count / limit)
+              const { pages, currentPage } = pageInfo
+              if (currentPage < pages) {
+                pageInfo.nextLink = `http://localhost:8080/items?${qs.stringify({ ...req.query, ...{ page: page + 1 } })}`
+              }
 
-            if (currentPage > 1) {
-              pageInfo.prevLink = `http://localhost:8080/items?${qs.stringify({ ...req.query, ...{ page: page - 1 } })}`
-            }
-            res.send({
-              success: true,
-              message: 'List of item',
-              data: result,
-              pageInfo
+              if (currentPage > 1) {
+                pageInfo.prevLink = `http://localhost:8080/items?${qs.stringify({ ...req.query, ...{ page: page - 1 } })}`
+              }
+              res.send({
+                success: true,
+                message: 'List of item',
+                data: result,
+                pageInfo
+              })
             })
-          })
+          } else {
+            res.send({
+              success: false,
+              message: 'Data not found'
+            })
+          }
         } else {
-          res.send({
+          res.status(500).send({
             success: false,
-            message: 'Data not found'
+            messgae: 'Internal Server Error'
           })
         }
-      } else {
-        res.status(500).send({
-          success: false,
-          messgae: 'Internal Server Error'
-        })
-      }
-    })
+      })
   },
   updateItem: (req, res) => {
     const { name, price, description } = req.body
