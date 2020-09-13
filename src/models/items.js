@@ -13,8 +13,8 @@ module.exports = {
       cb(result)
     })
   },
-  updateItemModel: (id, arr, cb) => {
-    db.query(`UPDATE ${table} SET name ="${arr[0]}",price=${arr[1]},description="${arr[2]}" 
+  updateItemModel: (id, data, cb) => {
+    db.query(`UPDATE ${table} SET name ="${data.name}",price=${data.price},description="${data.description},category=${data.category}" 
     WHERE id=${id}`, (_err, result, _field) => {
       cb(result)
     })
