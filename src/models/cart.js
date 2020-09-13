@@ -11,8 +11,8 @@ module.exports = {
       cb(result)
     })
   },
-  getCartModel: (cb) => {
-    db.query(`SELECT name, total, price, price * total as Summary FROM items INNER JOIN ${table} ON items.id = cart.itemId `
+  getCartModel: (id, cb) => {
+    db.query(`SELECT name, total, price, price * total as Summary FROM items INNER JOIN ${table} ON items.id = cart.itemId WHERE userid =${id}`
       , (_err, result, _field) => {
         cb(result)
       })
