@@ -11,7 +11,17 @@ const registerSchema = Joi.object({
   phoneNumber: Joi.string().max(13).min(10).required()
 })
 
+const updateSchema = Joi.object({
+  name: Joi.string().min(4).max(20).trim().required(),
+  email: Joi.string().email().trim().lowercase().min(5).required(),
+  phoneNumber: Joi.string().max(13).min(10).trim().required(),
+  gender: Joi.string().trim(),
+  birthDay: Joi.string().trim()
+
+})
+
 module.exports = {
   categorySchema,
-  registerSchema
+  registerSchema,
+  updateSchema
 }
