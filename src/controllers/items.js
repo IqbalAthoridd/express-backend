@@ -207,15 +207,22 @@ module.exports = {
   },
   updatePatrialItem: (req, res) => {
     const { id } = req.params
-    const { name = '', price = '', description = '' } = req.body
+    let { name = '', price = '', description = '', category = '' } = req.body
 
-    if (name.trim() || price.trim() || description.trim()) {
+    if (name.trim() || price.trim() || description.trim() || category.trim()) {
       getItemModel(id, result => {
         if (result.length) {
           const data = Object.entries(req.body).map(item => {
             return parseInt(item[1] > 0) ? `${item[0]} = ${item[1]}` : `${item[0]} = '${item[1]}'`
           })
-          updatePartialModel(id, data, result => {
+
+          let coma = ''
+          if (category !== '') {
+            category = `category = ${category}`
+            coma = ','
+          }
+
+          updatePartialModel(id, data, [coma, category], result => {
             if (result.affectedRows > 0) {
               res.send({
                 success: true,

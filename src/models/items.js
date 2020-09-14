@@ -20,8 +20,8 @@ module.exports = {
       cb(result)
     })
   },
-  updatePartialModel: (id, arr, cb) => {
-    db.query(`UPDATE ${table} SET ${arr} WHERE id=${id}`, (_err, result, _field) => {
+  updatePartialModel: (id, arr, data, cb) => {
+    db.query(`UPDATE ${table} SET ${arr}${data[0]}${data[1]} WHERE id=${id}`, (_err, result, _field) => {
       cb(result)
     })
   },

@@ -7,6 +7,6 @@ router.post('/', createCategory)
 router.get('/:id', getCategory)
 router.delete('/:id', deleteCategory)
 router.get('/', getAllCategory)
-router.post('/:id', updateCategory)
+router.put('/:id', updateCategory)
 
 module.exports = router
