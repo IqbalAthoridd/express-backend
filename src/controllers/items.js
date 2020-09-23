@@ -62,23 +62,22 @@ module.exports = {
     }
   },
 
-  getDetailItem: (req, res) => {
+  getDetailItem: async (req, res) => {
     const { id } = req.params
 
-    getItemModel(id, result => {
-      if (result.length) {
-        res.send({
-          success: true,
-          message: 'List of Data',
-          data: result
-        })
-      } else {
-        res.status(404).send({
-          success: false,
-          messgae: "Data does't exist"
-        })
-      }
-    })
+    const result = await getItemModel(id)
+    if (result.length) {
+      res.send({
+        success: true,
+        message: 'List of Data',
+        data: result
+      })
+    } else {
+      res.status(404).send({
+        success: false,
+        messgae: "Data does't exist"
+      })
+    }
   },
   getItem: (req, res) => {
     let { page, limit, search, sortBy, sortTo = 'ASC', sortTime, price = 0 } = req.query
