@@ -2,9 +2,14 @@ const db = require('../helpers/db')
 const table = 'items'
 
 module.exports = {
-  getItemModel: (id, cb) => {
-    db.query(`SELECT * FROM ${table} WHERE id=${id}`, (_err, result, _field) => {
-      cb(result)
+  getItemModel: (id) => {
+    return new Promise((resolve, reject) => {
+      db.query(`SELECT * FROM ${table} WHERE id=${id}`, (_err, result, _field) => {
+        if (!_err) {
+          resolve(result)
+        }
+        reject(_err)
+      })
     })
   },
   createItemModel: (data, imageId) => {
