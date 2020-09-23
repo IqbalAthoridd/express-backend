@@ -1,6 +1,6 @@
+const { upload } = require('../helpers/init_multer')
 const qs = require('querystring')
 const { createItemSchema } = require('../helpers/validation_schema')
-const { upload } = require('../helpers/init_multer')
 
 const {
   getItemModel,
@@ -15,50 +15,50 @@ const {
 
 module.exports = {
   createItem: async (req, res) => {
-    upload(req, res, async (_err) => {
-      try {
-        if (req.files.length < 4 || !req.files === undefined) {
-          res.send({
-            success: false,
-            messgae: 'Image Must be 4'
-          })
-        } else {
-          const images = req.files.map(data => data.filename)
-          const data = await createItemSchema.validateAsync({ ...req.body })
-          createImageModel(images, result => {
-            if (result.affectedRows > 0) {
-              createItemModel(data, result.insertId, dataResult => {
-                if (dataResult.affectedRows > 0) {
-                  res.status(201).send({
-                    success: true,
-                    message: 'Item has been created',
-                    data: {
-                      id: result.insertId,
-                      ...req.body
-                    }
-                  })
-                } else {
-                  res.send({
-                    success: false,
-                    message: 'Internal server Error'
-                  })
-                }
-              })
-            } else {
-              res.send({
-                success: false,
-                messgae: 'Internal server Error'
-              })
-            }
-          })
-        }
-      } catch (err) {
+    try {
+      console.log(req.files)
+      if (req.files.length < 4 || !req.files === undefined) {
         res.send({
           success: false,
-          message: err.message
+          messgae: 'Image Must be 4'
+        })
+      } else {
+        const images = req.files.map(data => data.path.replace(/\\/g, '/'))
+        const data = await createItemSchema.validateAsync({ ...req.body })
+        createImageModel(images, result => {
+          if (result.affectedRows > 0) {
+            createItemModel(data, result.insertId, dataResult => {
+              if (dataResult.affectedRows > 0) {
+                res.status(201).send({
+                  success: true,
+                  message: 'Item has been created',
+                  data: {
+                    id: result.insertId,
+                    ...req.body
+                  }
+                })
+              } else {
+                res.send({
+                  success: false,
+                  message: 'Internal server Error'
+                })
+              }
+            })
+          } else {
+            res.send({
+              success: false,
+              messgae: 'Internal server Error'
+            })
+          }
         })
       }
-    })
+    } catch (err) {
+      res.send({
+        success: false,
+        message: err.message
+      })
+      console.log(err)
+    }
   },
 
   getDetailItem: (req, res) => {

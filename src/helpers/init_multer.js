@@ -1,10 +1,11 @@
 const multer = require('multer')
 const fs = require('fs')
 const path = require('path')
-const storage = multer.diskStorage({
 
+const size = 2000
+const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const dir = './src/assets/img'
+    const dir = './assets/picture'
 
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir)
@@ -16,10 +17,16 @@ const storage = multer.diskStorage({
   }
 })
 
-const upload = multer({ storage: storage }).array('images', 4)
-const upload2 = multer({ storage: storage }).single('image')
+const upload = multer({
+  storage: storage,
+  fileFilter: (req, file, cb) => {
+    if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+      return cb(new Error('The uploaded file must be an image'))
+    }
+    cb(null, true)
+  }
+}).array('picture', 4)
 
 module.exports = {
-  upload,
-  upload2
+  upload
 }

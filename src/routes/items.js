@@ -1,4 +1,5 @@
 const { Router } = require('express')
+const { upload } = require('../helpers/init_multer')
 
 const { getDetailItem, getItem, updateItem, updatePatrialItem, deleteItem, createItem } = require('../controllers/items')
 
