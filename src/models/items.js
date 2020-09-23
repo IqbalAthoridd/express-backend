@@ -47,10 +47,15 @@ module.exports = {
       cb(result)
     })
   },
-  createImageModel: (arr, cb) => {
-    db.query(`INSERT INTO imageItems (image1,image2,image3,image4) VALUES
+  createImageModel: (arr) => {
+    return new Promise((resolve, reject) => {
+      db.query(`INSERT INTO imageItems (image1,image2,image3,image4) VALUES
     ("${arr[0]}","${arr[1]}","${arr[2]}","${arr[3]}")`, (_err, result, _field) => {
-      cb(result)
+        if (!_err) {
+          resolve(result)
+        }
+        reject(_err)
+      })
     })
   }
 }
