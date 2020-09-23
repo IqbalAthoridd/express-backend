@@ -1,11 +1,15 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const app = express()
+const cors = require('cors')
 
 const itemRoute = require('./src/routes/items')
 const categoryRoute = require('./src/routes/category')
 const authRouter = require('./src/routes/auth')
 const cartRouter = require('./src/routes/cart')
+
+app.use(cors())
+
 app.use(bodyParser.urlencoded({
   extended: false
 }))
