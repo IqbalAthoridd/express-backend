@@ -25,7 +25,7 @@ const upload = multer({
     }
     cb(null, true)
   }
-}).array('picture', 4)
+})
 
 module.exports = {
   upload

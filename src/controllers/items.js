@@ -1,4 +1,4 @@
-const { upload } = require('../helpers/init_multer')
+
 const qs = require('querystring')
 const { createItemSchema } = require('../helpers/validation_schema')
 
