@@ -16,7 +16,6 @@ const {
 module.exports = {
   createItem: async (req, res) => {
     try {
-      console.log(req.files)
       if (req.files.length < 4 || !req.files === undefined) {
         res.send({
           success: false,
@@ -25,25 +24,25 @@ module.exports = {
       } else {
         const images = req.files.map(data => data.path.replace(/\\/g, '/'))
         const data = await createItemSchema.validateAsync({ ...req.body })
-        createImageModel(images, result => {
+        createImageModel(images, async result => {
           if (result.affectedRows > 0) {
-            createItemModel(data, result.insertId, dataResult => {
-              if (dataResult.affectedRows > 0) {
-                res.status(201).send({
-                  success: true,
-                  message: 'Item has been created',
-                  data: {
-                    id: result.insertId,
-                    ...req.body
-                  }
-                })
-              } else {
-                res.send({
-                  success: false,
-                  message: 'Internal server Error'
-                })
-              }
-            })
+            const { affectedRows } = await createItemModel(data, result.insertId)
+            console.log(affectedRows)
+            if (affectedRows > 0) {
+              res.status(201).send({
+                success: true,
+                message: 'Item has been created',
+                data: {
+                  id: result.insertId,
+                  ...req.body
+                }
+              })
+            } else {
+              res.send({
+                success: false,
+                message: 'Internal server Error'
+              })
+            }
           } else {
             res.send({
               success: false,

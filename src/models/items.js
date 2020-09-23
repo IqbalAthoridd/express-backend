@@ -7,11 +7,15 @@ module.exports = {
       cb(result)
     })
   },
-  createItemModel: (data, imageId, cb) => {
-    db.query(`INSERT INTO ${table} (name,price,description,image,category) VALUES 
-    ("${data.name}",${data.price},"${data.description}",${imageId},${data.category})`, (_err, result, _field) => {
-      console.log(_err)
-      cb(result)
+  createItemModel: (data, imageId) => {
+    return new Promise((resolve, reject) => {
+      db.query(`INSERT INTO ${table} (name,price,description,image,category) VALUES 
+      ("${data.name}",${data.price},"${data.description}",${imageId},${data.category})`, (_err, result, _field) => {
+        if (!_err) {
+          resolve(result)
+        }
+        reject(_err)
+      })
     })
   },
   updateItemModel: (id, data, cb) => {
