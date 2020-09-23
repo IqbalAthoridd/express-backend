@@ -35,7 +35,10 @@ module.exports = {
               message: 'Item has been created',
               data: {
                 id: result.insertId,
-                ...req.body
+                ...req.body,
+                image1: images[0],
+                image2: images[1],
+                image3: images[2]
               }
             })
           } else {
@@ -56,7 +59,6 @@ module.exports = {
         success: false,
         message: err.message
       })
-      console.log(err)
     }
   },
 
