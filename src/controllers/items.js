@@ -24,32 +24,32 @@ module.exports = {
       } else {
         const images = req.files.map(data => data.path.replace(/\\/g, '/'))
         const data = await createItemSchema.validateAsync({ ...req.body })
-        createImageModel(images, async result => {
-          if (result.affectedRows > 0) {
-            const { affectedRows } = await createItemModel(data, result.insertId)
-            console.log(affectedRows)
-            if (affectedRows > 0) {
-              res.status(201).send({
-                success: true,
-                message: 'Item has been created',
-                data: {
-                  id: result.insertId,
-                  ...req.body
-                }
-              })
-            } else {
-              res.send({
-                success: false,
-                message: 'Internal server Error'
-              })
-            }
+        const result = await createImageModel(images)
+
+        if (result.affectedRows > 0) {
+          const { affectedRows } = await createItemModel(data, result.insertId)
+
+          if (affectedRows > 0) {
+            res.status(201).send({
+              success: true,
+              message: 'Item has been created',
+              data: {
+                id: result.insertId,
+                ...req.body
+              }
+            })
           } else {
             res.send({
               success: false,
-              messgae: 'Internal server Error'
+              message: 'Internal server Error'
             })
           }
-        })
+        } else {
+          res.send({
+            success: false,
+            messgae: 'Internal server Error'
+          })
+        }
       }
     } catch (err) {
       res.send({
