@@ -29,14 +29,26 @@ module.exports = {
       cb(result)
     })
   },
-  updatePartialModel: (id, arr, data, cb) => {
-    db.query(`UPDATE ${table} SET ${arr}${data[0]}${data[1]} WHERE id=${id}`, (_err, result, _field) => {
-      cb(result)
+  updatePartialModel: (id, arr, data) => {
+    return new Promise((resolve, reject) => {
+      db.query(`UPDATE ${table} SET ${arr}${data[0]}${data[1]} WHERE id=${id}`, (_err, result, _field) => {
+        if (_err) {
+          reject(_err)
+        } else {
+          resolve(result)
+        }
+      })
     })
   },
-  deleteItemModel: (id, cb) => {
-    db.query(`DELETE FROM ${table} WHERE id=${id}`, (_err, result, _field) => {
-      cb(result)
+  deleteItemModel: (id) => {
+    return new Promise((resolve, reject) => {
+      db.query(`DELETE FROM ${table} WHERE id=${id}`, (_err, result, _field) => {
+        if (_err) {
+          reject(_err)
+        } else {
+          resolve(result)
+        }
+      })
     })
   },
   searchItemModel: (Search, arr, sort, sortTo, sortTime, price = 0) => {
