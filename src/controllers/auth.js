@@ -6,51 +6,42 @@ const { creteUserModel, getUserModel, updateUserModel } = require('../models/aut
 
 module.exports = {
   authRegister: async (req, res) => {
-    upload2(req, res, async (_err) => {
-      try {
-        const { filename } = req.file
-        const data = await registerSchema.validateAsync({ ...req.body })
-        const salt = 10
-        data.password = await bcrypt.hash(data.password, salt)
-        getUserModel(data.email, dataResult => {
-          if (!dataResult.length) {
-            dataResult = [{ email: '', phoneNumber: '' }]
-          }
-          if (dataResult[0].phoneNumber === data.phoneNumber) {
-            res.send({
-              success: false,
-              message: 'Phone number already use'
-            })
-          }
-          if (dataResult[0].email !== data.email) {
-            creteUserModel(data, filename, result => {
-              if (result.affectedRows > 0) {
-                res.send({
-                  success: true,
-                  message: 'User Created',
-                  data: data
-                })
-              } else {
-                res.send({
-                  success: false,
-                  message: 'Interal Server Error'
-                })
-              }
-            })
-          } else {
-            res.send({
-              success: false,
-              message: `Email ${data.email} already use, try another email`
-            })
-          }
-        })
-      } catch (err) {
+    try {
+      const { path } = req.file
+      console.log(path)
+      const data = await registerSchema.validateAsync({ ...req.body })
+      const salt = 10
+      data.password = await bcrypt.hash(data.password, salt)
+      let dataResult = await getUserModel(data.email)
+      if (!dataResult.length) {
+        dataResult = [{ email: '' }]
+      }
+      if (dataResult[0].email !== data.email) {
+        const result = creteUserModel(data, path)
+        if (result.affectedRows > 0) {
+          res.send({
+            success: true,
+            message: 'User Created',
+            data: { id: result.insertId, ...data, avatar: path }
+          })
+        } else {
+          res.send({
+            success: false,
+            message: 'Interal Server Error'
+          })
+        }
+      } else {
         res.send({
           success: false,
-          message: err.message
+          message: `Email ${data.email} already use, try another email`
         })
       }
-    })
+    } catch (err) {
+      res.send({
+        success: false,
+        message: err.message
+      })
+    }
   },
   authLogin: (req, res) => {
     const { email, password } = req.body
