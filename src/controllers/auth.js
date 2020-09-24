@@ -7,22 +7,28 @@ const { creteUserModel, getUserModel, updateUserModel } = require('../models/aut
 module.exports = {
   authRegister: async (req, res) => {
     try {
-      const { path } = req.file
-      console.log(path)
-      const data = await registerSchema.validateAsync({ ...req.body })
+      let { path } = req.file
+      path = path.replace(/\\/g, '/')
+      const { error, value } = await registerSchema.validate({ ...req.body })
+      if (error) {
+        res.send({
+          success: false,
+          message: error.details[0].message
+        })
+      }
       const salt = 10
-      data.password = await bcrypt.hash(data.password, salt)
-      let dataResult = await getUserModel(data.email)
+      value.password = await bcrypt.hash(value.password, salt)
+      let dataResult = await getUserModel(value.email)
       if (!dataResult.length) {
         dataResult = [{ email: '' }]
       }
-      if (dataResult[0].email !== data.email) {
-        const result = creteUserModel(data, path)
+      if (dataResult[0].email !== value.email) {
+        const result = await creteUserModel(value, path)
         if (result.affectedRows > 0) {
           res.send({
             success: true,
             message: 'User Created',
-            data: { id: result.insertId, ...data, avatar: path }
+            data: { id: result.insertId, ...value, password: undefined, avatar: path }
           })
         } else {
           res.send({
@@ -33,45 +39,41 @@ module.exports = {
       } else {
         res.send({
           success: false,
-          message: `Email ${data.email} already use, try another email`
+          message: `Email ${value.email} already use, try another email`
         })
       }
     } catch (err) {
-      res.send({
-        success: false,
-        message: err.message
-      })
+      console.log(err)
     }
   },
-  authLogin: (req, res) => {
+  authLogin: async (req, res) => {
     const { email, password } = req.body
-    getUserModel(email, async (result) => {
-      if (result.length) {
-        const { userId, name, email } = result[0]
-        const data = await bcrypt.compare(password, result[0].password)
-        if (data) {
-          res.send({
-            success: true,
-            message: 'Login Succes',
-            data: {
-              userId,
-              name,
-              email
-            }
-          })
-        } else {
-          res.send({
-            success: false,
-            message: 'Invalid email or password'
-          })
-        }
+    const result = await getUserModel(email)
+    if (result.length) {
+      const { userId, name, email } = result[0]
+      const data = await bcrypt.compare(password, result[0].password)
+      if (data) {
+        res.send({
+          success: true,
+          message: 'Login Succes',
+          data: {
+            userId,
+            name,
+            email
+          }
+        })
       } else {
         res.send({
           success: false,
           message: 'Invalid email or password'
         })
       }
-    })
+    } else {
+      res.send({
+        success: false,
+        message: 'Invalid email or password'
+      })
+    }
   },
   editUser: async (req, res) => {
     upload2(req, res, async (_err) => {
