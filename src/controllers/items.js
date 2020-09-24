@@ -38,7 +38,8 @@ module.exports = {
                 ...req.body,
                 image1: images[0],
                 image2: images[1],
-                image3: images[2]
+                image3: images[2],
+                image4: images[3]
               }
             })
           } else {
@@ -119,14 +120,14 @@ module.exports = {
     } else {
       page = parseInt(page)
     }
-    page = (page - 1) * limit
+    const offset = (page - 1) * limit
 
     let sort = `HAVING ${sortName} = ${sortValue}`
     if (sortBy === undefined) {
       sort = ''
     }
 
-    searchItemModel([searchKey, searchValue], [limit, page], sort, sortTo,
+    searchItemModel([searchKey, searchValue], [limit, offset], sort, sortTo,
       sortTime, price, result => {
         if (result) {
           const pageInfo = {

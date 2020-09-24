@@ -40,9 +40,15 @@ module.exports = {
     })
   },
   searchItemModel: (Search, arr, sort, sortTo, sortTime, price = 0, cb) => {
-    db.query(`SELECT * FROM (SELECT * FROM ${table} WHERE ${Search[0]} LIKE "%${Search[1]}%" ${sort} 
-    ORDER BY price ${sortTo} LIMIT ${arr[0]} OFFSET ${arr[1]}) AS tabel HAVING price >= ${price} ${sortTime} `
-    , (_err, result, _field) => {
+    // db.query(`SELECT * FROM (SELECT * FROM ${table} WHERE ${Search[0]} LIKE "%${Search[1]}%" ${sort}
+    // ORDER BY price ${sortTo} LIMIT ${arr[0]} OFFSET ${arr[1]}) AS tabel HAVING price >= ${price} ${sortTime} `
+    // , (_err, result, _field) => {
+    //   cb(result)
+    // })
+    const rowSubQuery = 'i.id,i.name, i.price,i.description,c.name as Category,image1,image2,image3,image4,create_at,update_at'
+    const subQuery = `SELECT ${rowSubQuery} from ${table} i INNER JOIN imageitems on i.image=imageitems.imageId 
+    INNER JOIN category c on i.category = c.id WHERE i.${Search[0]} LIKE "%${Search[1]}%" ORDER BY create_at ${sortTo} LIMIT ${arr[0]} OFFSET ${arr[1]}`
+    db.query(`${subQuery}`, (_err, result, _field) => {
       cb(result)
     })
   },
