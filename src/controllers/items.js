@@ -139,24 +139,23 @@ module.exports = {
         prevLink: null
       }
       if (result.length) {
-        countGetItemModel([searchKey, searchValue], sort, data => {
-          const { count } = data[0]
-          pageInfo.count = count
-          pageInfo.pages = Math.ceil(count / limit)
-          const { pages, currentPage } = pageInfo
-          if (currentPage < pages) {
-            pageInfo.nextLink = `http://localhost:8080/items?${qs.stringify({ ...req.query, ...{ page: page + 1 } })}`
-          }
+        const data = await countGetItemModel([searchKey, searchValue], sort)
+        const { count } = data[0]
+        pageInfo.count = count
+        pageInfo.pages = Math.ceil(count / limit)
+        const { pages, currentPage } = pageInfo
+        if (currentPage < pages) {
+          pageInfo.nextLink = `http://localhost:8080/items?${qs.stringify({ ...req.query, ...{ page: page + 1 } })}`
+        }
 
-          if (currentPage > 1) {
-            pageInfo.prevLink = `http://localhost:8080/items?${qs.stringify({ ...req.query, ...{ page: page - 1 } })}`
-          }
-          res.send({
-            success: true,
-            message: 'List of item',
-            data: result,
-            pageInfo
-          })
+        if (currentPage > 1) {
+          pageInfo.prevLink = `http://localhost:8080/items?${qs.stringify({ ...req.query, ...{ page: page - 1 } })}`
+        }
+        res.send({
+          success: true,
+          message: 'List of item',
+          data: result,
+          pageInfo
         })
       } else {
         res.send({
