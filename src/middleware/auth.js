@@ -1,0 +1,24 @@
+const jwt = require('jsonwebtoken')
+require('dotenv').config()
+
+module.exports = {
+  signAcessToken: (userid, name, avatar) => {
+    return new Promise((resolve, reject) => {
+      const payload = {
+        userid,
+        name,
+        avatar
+      }
+      const secret = process.env.ACCESS_TOKEN_SECRET
+      const options = {
+      }
+      jwt.sign(payload, secret, options, (err, token) => {
+        if (err) {
+          console.log(err)
+          reject(err)
+        }
+        resolve(token)
+      })
+    })
+  }
+}
