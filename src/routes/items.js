@@ -5,7 +5,7 @@ const { getDetailItem, getItem, updateItem, updatePatrialItem, deleteItem, creat
 
 const router = Router()
 
-router.post('/',  createItem)
+router.post('/', upload.array('picture', 4), createItem)
 router.get('/', getItem)
 router.get('/:id', getDetailItem)
 router.put('/:id', updateItem)

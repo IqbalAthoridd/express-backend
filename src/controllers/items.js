@@ -80,7 +80,7 @@ module.exports = {
       })
     }
   },
-  getItem: (req, res) => {
+  getItem: async (req, res) => {
     let { page, limit, search, sortBy, sortTo = 'ASC', sortTime, price = 0 } = req.query
     let searchKey = ''
     let searchValue = ''
@@ -127,50 +127,49 @@ module.exports = {
       sort = ''
     }
 
-    searchItemModel([searchKey, searchValue], [limit, offset], sort, sortTo,
-      sortTime, price, result => {
-        if (result) {
-          const pageInfo = {
-            count: 0,
-            pages: 0,
-            currentPage: page,
-            limitPerPage: limit,
-            nextLink: null,
-            prevLink: null
+    const result = await searchItemModel([searchKey, searchValue], [limit, offset], sort, sortTo,
+      sortTime, price)
+    if (result) {
+      const pageInfo = {
+        count: 0,
+        pages: 0,
+        currentPage: page,
+        limitPerPage: limit,
+        nextLink: null,
+        prevLink: null
+      }
+      if (result.length) {
+        countGetItemModel([searchKey, searchValue], sort, data => {
+          const { count } = data[0]
+          pageInfo.count = count
+          pageInfo.pages = Math.ceil(count / limit)
+          const { pages, currentPage } = pageInfo
+          if (currentPage < pages) {
+            pageInfo.nextLink = `http://localhost:8080/items?${qs.stringify({ ...req.query, ...{ page: page + 1 } })}`
           }
-          if (result.length) {
-            countGetItemModel([searchKey, searchValue], sort, data => {
-              const { count } = data[0]
-              pageInfo.count = count
-              pageInfo.pages = Math.ceil(count / limit)
-              const { pages, currentPage } = pageInfo
-              if (currentPage < pages) {
-                pageInfo.nextLink = `http://localhost:8080/items?${qs.stringify({ ...req.query, ...{ page: page + 1 } })}`
-              }
 
-              if (currentPage > 1) {
-                pageInfo.prevLink = `http://localhost:8080/items?${qs.stringify({ ...req.query, ...{ page: page - 1 } })}`
-              }
-              res.send({
-                success: true,
-                message: 'List of item',
-                data: result,
-                pageInfo
-              })
-            })
-          } else {
-            res.send({
-              success: false,
-              message: 'Data not found'
-            })
+          if (currentPage > 1) {
+            pageInfo.prevLink = `http://localhost:8080/items?${qs.stringify({ ...req.query, ...{ page: page - 1 } })}`
           }
-        } else {
-          res.status(500).send({
-            success: false,
-            messgae: 'Internal Server Error'
+          res.send({
+            success: true,
+            message: 'List of item',
+            data: result,
+            pageInfo
           })
-        }
+        })
+      } else {
+        res.send({
+          success: false,
+          message: 'Data not found'
+        })
+      }
+    } else {
+      res.status(500).send({
+        success: false,
+        messgae: 'Internal Server Error'
       })
+    }
   },
   updateItem: async (req, res) => {
     try {
