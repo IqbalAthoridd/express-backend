@@ -1,6 +1,6 @@
 const { registerSchema, updateSchema } = require('../helpers/validation_schema')
 const bcrypt = require('bcrypt')
-const { upload2 } = require('../helpers/init_multer')
+const { signAcessToken } = require('../middleware/auth')
 
 const { creteUserModel, getUserModel, updateUserModel } = require('../models/auth')
 
@@ -47,32 +47,34 @@ module.exports = {
     }
   },
   authLogin: async (req, res) => {
-    const { email, password } = req.body
-    const result = await getUserModel(email)
-    if (result.length) {
-      const { userId, name, email } = result[0]
-      const data = await bcrypt.compare(password, result[0].password)
-      if (data) {
-        res.send({
-          success: true,
-          message: 'Login Succes',
-          data: {
-            userId,
-            name,
-            email
-          }
-        })
+    try {
+      const { email, password } = req.body
+      const result = await getUserModel(email)
+      if (result.length) {
+        console.log(result)
+        const { userId, name, email } = result[0]
+        const data = await bcrypt.compare(password, result[0].password)
+        if (data) {
+          const token = await signAcessToken(userId, name, email)
+          res.send({
+            success: true,
+            message: 'Login Succes',
+            token
+          })
+        } else {
+          res.send({
+            success: false,
+            message: 'Invalid email or password'
+          })
+        }
       } else {
         res.send({
           success: false,
           message: 'Invalid email or password'
         })
       }
-    } else {
-      res.send({
-        success: false,
-        message: 'Invalid email or password'
-      })
+    } catch (err) {
+      console.log(err)
     }
   },
   editUser: async (req, res) => {
