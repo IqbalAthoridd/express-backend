@@ -9,13 +9,15 @@ const authRouter = require('./src/routes/auth')
 const cartRouter = require('./src/routes/cart')
 require('dotenv').config()
 
+const { verifyAccessToken } = require('./src/middleware/auth')
+
 app.use(cors())
 
 app.use(bodyParser.urlencoded({
   extended: false
 }))
 
-app.use('/item', itemRoute)
+app.use('/item', verifyAccessToken, itemRoute)
 app.use('/category', categoryRoute)
 app.use('/auth', authRouter)
 app.use('/cart', cartRouter)
