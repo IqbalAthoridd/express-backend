@@ -24,9 +24,15 @@ module.exports = {
     })
   },
   updateItemModel: (id, data, cb) => {
-    db.query(`UPDATE ${table} SET name ="${data.name}",price=${data.price},description="${data.description},category=${data.category}" 
-    WHERE id=${id}`, (_err, result, _field) => {
-      cb(result)
+    return new Promise((resolve, reject) => {
+      db.query(`UPDATE ${table} SET name ="${data.name}",price=${data.price},description="${data.description},category=${data.category}" 
+      WHERE id=${id}`, (_err, result, _field) => {
+        if (_err) {
+          reject(_err)
+        } else {
+          resolve(result)
+        }
+      })
     })
   },
   updatePartialModel: (id, arr, data) => {

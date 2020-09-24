@@ -174,29 +174,28 @@ module.exports = {
     try {
       const { id } = req.params
       const data = await createItemSchema.validateAsync({ ...req.body })
-      getItemModel(id, dataResult => {
-        if (dataResult.length > 0) {
-          updateItemModel(id, data, result => {
-            if (result.affectedRows) {
-              res.send({
-                success: true,
-                message: 'data updated !',
-                data: data
-              })
-            } else {
-              res.status(500).send({
-                success: false,
-                message: 'Internal Server Error'
-              })
-            }
+      const dataResult = await getItemModel(id)
+      if (dataResult.length > 0) {
+        const result = await updateItemModel(id, data)
+        console.log(result)
+        if (result.affectedRows) {
+          res.send({
+            success: true,
+            message: 'data updated !',
+            data: data
           })
         } else {
-          res.status(404).send({
+          res.status(500).send({
             success: false,
-            message: `Data with id ${id} does't exist`
+            message: 'Internal Server Error'
           })
         }
-      })
+      } else {
+        res.status(404).send({
+          success: false,
+          message: `Data with id ${id} does't exist`
+        })
+      }
     } catch (err) {
       res.send({
         success: false,
