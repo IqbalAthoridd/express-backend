@@ -1,16 +1,27 @@
 const db = require('../helpers/db')
 const table = 'users'
 module.exports = {
-  creteUserModel: async (data, image, cb) => {
-    db.query(`INSERT INTO ${table} (name,email,password,phoneNumber,image) VALUES ("${data.name}","${data.email}","${data.password}"
+  creteUserModel: async (data, image) => {
+    return new Promise((resolve, reject) => {
+      db.query(`INSERT INTO ${table} (name,email,password,phoneNumber,image) VALUES ("${data.name}","${data.email}","${data.password}"
     ,"${data.phoneNumber}","${image}")`, (_err, result, _field) => {
-      console.log(_err)
-      cb(result)
+        if (_err) {
+          reject(_err)
+        } else {
+          resolve(result)
+        }
+      })
     })
   },
-  getUserModel: (data, cb) => {
-    db.query(`SELECT * FROM ${table} WHERE email = "${data}"`, (_err, result, _field) => {
-      cb(result)
+  getUserModel: (data) => {
+    return new Promise((resolve, reject) => {
+      db.query(`SELECT * FROM ${table} WHERE email = "${data}"`, (_err, result, _field) => {
+        if (_err) {
+          reject(_err)
+        } else {
+          resolve(result)
+        }
+      })
     })
   },
   getUserByidModel: (id, cb) => {
