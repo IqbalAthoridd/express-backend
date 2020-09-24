@@ -58,10 +58,16 @@ module.exports = {
       })
     })
   },
-  countGetItemModel: (arr, sort, cb) => {
-    db.query(`SELECT COUNT('*') as count FROM (SELECT * FROM ${table} WHERE ${arr[0]} 
-      LIKE '%${arr[1]}%' ${sort}) as table1`, (_err, result, _field) => {
-      cb(result)
+  countGetItemModel: (arr, sort) => {
+    return new Promise((resolve, reject) => {
+      db.query(`SELECT COUNT('*') as count FROM (SELECT * FROM ${table} WHERE ${arr[0]} 
+        LIKE '%${arr[1]}%' ${sort}) as table1`, (_err, result, _field) => {
+        if (_err) {
+          reject(_err)
+        } else {
+          resolve(result)
+        }
+      })
     })
   },
   createImageModel: (arr) => {
