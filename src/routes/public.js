@@ -1,4 +1,7 @@
 const { Router } = require('express')
 const router = Router()
+const controller = require('../controllers/public')
 
-export default router
+router.get('/newItem', controller.newProducts)
+
+module.exports = router
