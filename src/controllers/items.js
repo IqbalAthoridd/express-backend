@@ -232,33 +232,28 @@ module.exports = {
     }
   },
 
-  deleteItem: (req, res) => {
+  deleteItem: async (req, res) => {
     const { id } = req.params
-    getItemModel(id, dataResult => {
-      if (dataResult.length > 0) {
-        deleteItemModel(id, result => {
-          if (result.affectedRows > 0) {
-            res.send({
-              success: true,
-              message: 'data has been deleted',
-              data: null
-            })
-          } else {
-            res.status(500).send({
-              success: false,
-              message: 'Internal Server Error'
-            })
-          }
+    const dataResult = await getItemModel(id)
+
+    if (dataResult.length) {
+      const result = await deleteItemModel(id)
+      if (result.affectedRows) {
+        res.send({
+          success: true,
+          message: 'data has been deleted'
         })
       } else {
-        res.status(404).send({
+        res.status(500).send({
           success: false,
-          message: `Data with id ${id} does't exist`
+          message: 'Internal Server Error'
         })
       }
-    })
+    } else {
+      res.status(404).send({
+        success: false,
+        message: `Data with id ${id} does't exist`
+      })
+    }
   }
-  // uploadItemImages:(req,res)=>
-  // upload(req,res,err=>)
-
 }
