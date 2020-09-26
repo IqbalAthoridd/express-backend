@@ -1,5 +1,6 @@
 
 const qs = require('querystring')
+const { upload } = require('../helpers/init_multer')
 const { createItemSchema } = require('../helpers/validation_schema')
 
 const {
@@ -15,19 +16,24 @@ const {
 
 module.exports = {
   createItem: async (req, res) => {
-    try {
-      if (req.files.length < 4 || !req.files === undefined) {
+    upload(req, res, async (_err) => {
+      if (_err) {
         res.send({
           success: false,
-          messgae: 'Image Must be 4'
+          message: _err.message
         })
-      } else {
-        const images = req.files.map(data => data.path.replace(/\\/g, '/'))
+      }
+      try {
         const data = await createItemSchema.validateAsync({ ...req.body })
-        const result = await createImageModel(images)
+        // const result = await createImageModel(images)
+        const result = await await createItemModel(data)
 
         if (result.affectedRows > 0) {
-          const { affectedRows } = await createItemModel(data, result.insertId)
+          const images = req.files.map(data => {
+            return [result.insertId,data.path.replace(/\\/g, '/')]
+          })
+          console.log(images)
+          const { affectedRows } = await createImageModel(images, result.insertId)
 
           if (affectedRows > 0) {
             res.status(201).send({
@@ -36,10 +42,6 @@ module.exports = {
               data: {
                 id: result.insertId,
                 ...req.body,
-                image1: images[0],
-                image2: images[1],
-                image3: images[2],
-                image4: images[3]
               }
             })
           } else {
@@ -54,13 +56,13 @@ module.exports = {
             messgae: 'Internal server Error'
           })
         }
+      } catch (err) {
+        res.send({
+          success: false,
+          message: err.message
+        })
       }
-    } catch (err) {
-      res.send({
-        success: false,
-        message: err.message
-      })
-    }
+    })
   },
 
   getDetailItem: async (req, res) => {
