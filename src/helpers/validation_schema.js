@@ -1,4 +1,4 @@
-const Joi = require('@hapi/joi')
+const Joi = require('joi')
 
 const categorySchema = Joi.object({
   name: Joi.string().min(4).trim().replace("'", '\'').required()
@@ -24,7 +24,9 @@ const createItemSchema = Joi.object({
   name: Joi.string().min(2).trim().replace("'", '\'').required(),
   price: Joi.number().required(),
   description: Joi.string().trim().replace("'", '\'').required(),
-  category: Joi.number().required()
+  quantity: Joi.number().required(),
+  condition_id: Joi.number().required(),
+  category_id: Joi.number().required()
 })
 
 module.exports = {
