@@ -2,6 +2,7 @@
 const qs = require('querystring')
 const { upload } = require('../helpers/init_multer')
 const { createItemSchema, updatePartialsSchema } = require('../helpers/validation_schema')
+const { response } = require('../helpers/response')
 
 const {
   getItemModel,
@@ -16,50 +17,25 @@ const {
 module.exports = {
   createItem: async (req, res) => {
     upload(req, res, async (_err) => {
-      if (_err) {
-        res.send({
-          success: false,
-          message: _err.message
-        })
-      }
       try {
+        _err && response(res, _err.message, {}, false, 400)
         const data = await createItemSchema.validateAsync({ ...req.body })
-        // const result = await createImageModel(images)
         const result = await await createItemModel(data)
 
-        if (result.affectedRows > 0) {
+        if (result.affectedRows) {
           const images = req.files.map(data => {
             return [result.insertId, data.path.replace(/\\/g, '/')]
           })
-          console.log(images)
           const { affectedRows } = await createImageModel(images, result.insertId)
 
-          if (affectedRows > 0) {
-            res.status(201).send({
-              success: true,
-              message: 'Item has been created',
-              data: {
-                id: result.insertId,
-                ...req.body
-              }
-            })
-          } else {
-            res.send({
-              success: false,
-              message: 'Internal server Error'
-            })
-          }
+          affectedRows
+            ? response(res, 'item has been cretaed', { data: { id: result.id, ...req.body } })
+            : response(res, 'Internal Server Error', {}, false, 500)
         } else {
-          res.send({
-            success: false,
-            messgae: 'Internal server Error'
-          })
+          response(res, 'Internal Server Error', {}, false, 500)
         }
       } catch (err) {
-        res.send({
-          success: false,
-          message: err.message
-        })
+        err.isJoi === true && response(res, err.message, false, 400)
       }
     })
   },
@@ -68,18 +44,10 @@ module.exports = {
     const { id } = req.params
 
     const result = await getItemModel(id)
-    if (result.length) {
-      res.send({
-        success: true,
-        message: 'List of Data',
-        data: result
-      })
-    } else {
-      res.status(404).send({
-        success: false,
-        messgae: "Data does't exist"
-      })
-    }
+
+    result.length
+      ? response(res, 'Data', { data: result })
+      : response(res, "Data does't exist", {}, false, 404)
   },
   getItem: async (req, res) => {
     let { page, limit, search, sortBy, sortTo = 'ASC', sortTime, price = 0 } = req.query
@@ -176,31 +144,16 @@ module.exports = {
       const { id } = req.params
       const data = await createItemSchema.validateAsync({ ...req.body })
       const dataResult = await getItemModel(id)
-      if (dataResult.length > 0) {
+      if (dataResult.length) {
         const result = await updateItemModel(id, data)
-        if (result.affectedRows) {
-          res.send({
-            success: true,
-            message: 'data updated !',
-            data: data
-          })
-        } else {
-          res.status(500).send({
-            success: false,
-            message: 'Internal Server Error'
-          })
-        }
+        result.affectedRows
+          ? response(res, 'Data updated !')
+          : response(res, 'Failed to update', {}, false, 500)
       } else {
-        res.status(404).send({
-          success: false,
-          message: `Data with id ${id} does't exist`
-        })
+        response(res, `Data with id ${id} does't exist`, {}, false, 404)
       }
     } catch (err) {
-      res.send({
-        success: false,
-        message: err.message
-      })
+      err.isJoi === true && response(res, err.message, false, 400)
     }
   },
   updatePatrialItem: async (req, res) => {
@@ -210,25 +163,14 @@ module.exports = {
       const result = await getItemModel(id)
       if (result.length) {
         const update = await updateItemModel(id, data)
-        if (update.affectedRows > 0) {
-          res.send({
-            success: true,
-            message: `Item ${id} has been updated`
-          })
-        } else {
-          res.send({
-            success: false,
-            message: 'Failed to update data'
-          })
-        }
+        update.affectedRows
+          ? response(res, 'Data updated !')
+          : response(res, 'Failed to update', {}, false, 500)
       } else {
-        res.send({
-          success: false,
-          message: `There is no item with id ${id}`
-        })
+        response(res, `Data with id ${id} does't exist`, {}, false, 404)
       }
     } catch (err) {
-      console.log(err)
+      err.isJoi === true && response(res, err.message, false, 400)
     }
   },
 
@@ -238,22 +180,11 @@ module.exports = {
 
     if (dataResult.length) {
       const result = await deleteItemModel(id)
-      if (result.affectedRows) {
-        res.send({
-          success: true,
-          message: 'data has been deleted'
-        })
-      } else {
-        res.status(500).send({
-          success: false,
-          message: 'Internal Server Error'
-        })
-      }
+      result.affectedRow
+        ? response(res, 'data has been deleted')
+        : response(res, 'Failed to delete', {}, false, 400)
     } else {
-      res.status(404).send({
-        success: false,
-        message: `Data with id ${id} does't exist`
-      })
+      response(res, `Data with id ${id} does't exist`, false, 404)
     }
   }
 }
