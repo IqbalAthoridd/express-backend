@@ -3,7 +3,7 @@ const table = 'users'
 module.exports = {
   creteUserModel: async (data, image) => {
     return new Promise((resolve, reject) => {
-      db.query(`INSERT INTO ${table} (name,email,password,phoneNumber,image) VALUES ("${data.name}","${data.email}","${data.password}"
+      db.query(`INSERT INTO ${table} (name,email,password,phoneNumber,picture) VALUES ("${data.name}","${data.email}","${data.password}"
     ,"${data.phoneNumber}","${image}")`, (_err, result, _field) => {
         if (_err) {
           reject(_err)
