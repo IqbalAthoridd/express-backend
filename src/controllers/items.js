@@ -1,13 +1,12 @@
 
 const qs = require('querystring')
 const { upload } = require('../helpers/init_multer')
-const { createItemSchema } = require('../helpers/validation_schema')
+const { createItemSchema, updatePartialsSchema } = require('../helpers/validation_schema')
 
 const {
   getItemModel,
   createItemModel,
   updateItemModel,
-  updatePartialModel,
   deleteItemModel,
   searchItemModel,
   countGetItemModel,
@@ -179,7 +178,6 @@ module.exports = {
       const dataResult = await getItemModel(id)
       if (dataResult.length > 0) {
         const result = await updateItemModel(id, data)
-        console.log(result)
         if (result.affectedRows) {
           res.send({
             success: true,
@@ -205,43 +203,32 @@ module.exports = {
       })
     }
   },
-  updatePatrialItem: (req, res) => {
-    const { id } = req.params
-    let { name = '', price = '', description = '', category = '' } = req.body
-
-    if (name.trim() || price.trim() || description.trim() || category.trim()) {
-      getItemModel(id, result => {
-        if (result.length) {
-          const data = Object.entries(req.body).map(item => {
-            return parseInt(item[1] > 0) ? `${item[0]} = ${item[1]}` : `${item[0]} = '${item[1]}'`
-          })
-
-          let coma = ''
-          if (category !== '') {
-            category = `category = ${category}`
-            coma = ','
-          }
-
-          updatePartialModel(id, data, [coma, category], result => {
-            if (result.affectedRows > 0) {
-              res.send({
-                success: true,
-                message: `Item ${id} has been updated`
-              })
-            } else {
-              res.send({
-                success: false,
-                message: 'Failed to update data'
-              })
-            }
+  updatePatrialItem: async (req, res) => {
+    try {
+      const { id } = req.params
+      const data = await updatePartialsSchema.validateAsync({ ...req.body })
+      const result = await getItemModel(id)
+      if (result.length) {
+        const update = await updateItemModel(id, data)
+        if (update.affectedRows > 0) {
+          res.send({
+            success: true,
+            message: `Item ${id} has been updated`
           })
         } else {
           res.send({
             success: false,
-            message: `There is no item with id ${id}`
+            message: 'Failed to update data'
           })
         }
-      })
+      } else {
+        res.send({
+          success: false,
+          message: `There is no item with id ${id}`
+        })
+      }
+    } catch (err) {
+      console.log(err)
     }
   },
 
