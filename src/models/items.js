@@ -1,5 +1,6 @@
+
 const db = require('../helpers/db')
-const table = 'items'
+const table = 'products'
 
 module.exports = {
   getItemModel: (id) => {
@@ -12,10 +13,10 @@ module.exports = {
       })
     })
   },
-  createItemModel: (data, imageId) => {
+  createItemModel: (data) => {
     return new Promise((resolve, reject) => {
-      db.query(`INSERT INTO ${table} (name,price,description,image,category) VALUES 
-      ("${data.name}",${data.price},"${data.description}",${imageId},${data.category})`, (_err, result, _field) => {
+      db.query(`INSERT INTO ${table} SET ?`, data, (_err, result, _field) => {
+        console.log(_err)
         if (!_err) {
           resolve(result)
         }
@@ -88,10 +89,9 @@ module.exports = {
       })
     })
   },
-  createImageModel: (arr) => {
+  createImageModel: (arr,id) => {
     return new Promise((resolve, reject) => {
-      db.query(`INSERT INTO imageItems (image1,image2,image3,image4) VALUES
-    ("${arr[0]}","${arr[1]}","${arr[2]}","${arr[3]}")`, (_err, result, _field) => {
+      db.query('INSERT INTO product_picture (produkId,url) VALUES ?', [arr], (_err, result, _field) => {
         if (!_err) {
           resolve(result)
         }
