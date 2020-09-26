@@ -22,13 +22,26 @@ const upload = multer({
   limits: size,
   fileFilter: (req, file, cb) => {
     if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
-      return cb(new Error('The uploaded file must be an image'))
+      return cb(new Error('The uploaded file must be an image'), false)
     }
     cb(null, true)
   }
 
-})
+}).array('picture', 10)
+
+const upload2 = multer({
+  storage: storage,
+  limits: size,
+  fileFilter: (req, file, cb) => {
+    if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+      return cb(new Error('The uploaded file must be an image'), false)
+    }
+    cb(null, true)
+  }
+
+}).single('avatar', 1)
 
 module.exports = {
-  upload
+  upload,
+  upload2
 }
