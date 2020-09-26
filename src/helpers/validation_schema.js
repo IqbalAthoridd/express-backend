@@ -29,9 +29,19 @@ const createItemSchema = Joi.object({
   category_id: Joi.number().required()
 })
 
+const updatePartialsSchema = Joi.object({
+  name: Joi.string().min(2).trim().replace("'", '\''),
+  price: Joi.number(),
+  description: Joi.string().trim().replace("'", '\''),
+  quantity: Joi.number(),
+  condition_id: Joi.number(),
+  category_id: Joi.number()
+})
+
 module.exports = {
   categorySchema,
   registerSchema,
   updateSchema,
-  createItemSchema
+  createItemSchema,
+  updatePartialsSchema
 }
