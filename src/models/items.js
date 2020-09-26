@@ -5,7 +5,11 @@ const table = 'products'
 module.exports = {
   getItemModel: (id) => {
     return new Promise((resolve, reject) => {
-      db.query(`SELECT * FROM ${table} WHERE id=${id}`, (_err, result, _field) => {
+      const rowSubQuery = `i.id,i.name AS 'name',i.price,i.description,i.quantity,c.name AS 'condition' 
+      ,ct.name AS 'category',i.create_at,i.update_at`
+      const query = `SELECT ${rowSubQuery} FROM products i INNER JOIN categories ct on i.category_id = ct.id 
+      INNER JOIN conditions c ON i.condition_id = c.id WHERE i.id = ?`
+      db.query(`${query}`, id, (_err, result, _field) => {
         if (!_err) {
           resolve(result)
         }
@@ -65,9 +69,12 @@ module.exports = {
     //   cb(result)
     // })
     return new Promise((resolve, reject) => {
-      const rowSubQuery = "i.id,i.name AS 'name',i.price,i.description,i.quantity,c.name AS 'condition' ,ct.name AS 'category',i.create_at,i.update_at"
-      const subQuery = `SELECT ${rowSubQuery} FROM products i INNER JOIN categories ct on i.category_id = ct.id INNER JOIN conditions c ON i.condition_id = c.id`
-      db.query(`SELECT * FROM (${subQuery}) as table_1 WHERE ${Search[0]} LIKE "%${Search[1]}%" ORDER BY create_at DESC LIMIT ${arr[0]} OFFSET ${arr[0]}`, (_err, result, _field) => {
+      const rowSubQuery = `i.id,i.name AS 'name',i.price,i.description,i.quantity,c.name AS 'condition' 
+      ,ct.name AS 'category',i.create_at,i.update_at`
+      const subQuery = `SELECT ${rowSubQuery} FROM products i INNER JOIN categories ct on i.category_id = ct.id 
+      INNER JOIN conditions c ON i.condition_id = c.id`
+      db.query(`SELECT * FROM (${subQuery}) as table_1 WHERE ${Search[0]} LIKE "%${Search[1]}%" 
+      ORDER BY create_at DESC LIMIT ${arr[0]} OFFSET ${arr[0]}`, (_err, result, _field) => {
         if (_err) {
           reject(_err)
         } else {
