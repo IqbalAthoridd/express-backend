@@ -43,7 +43,7 @@ module.exports = {
   },
   deleteItemModel: (id) => {
     return new Promise((resolve, reject) => {
-      db.query(`DELETE FROM ${table} WHERE id=${id}`, (_err, result, _field) => {
+      db.query(`DELETE FROM ${table} WHERE id=?`, id, (_err, result, _field) => {
         if (_err) {
           reject(_err)
         } else {
