@@ -65,9 +65,8 @@ module.exports = {
     //   cb(result)
     // })
     return new Promise((resolve, reject) => {
-      const rowSubQuery = 'i.id as id,i.name as name, i.price,i.description,c.name as category,image1,image2,image3,image4,create_at,update_at'
-      const subQuery = `SELECT ${rowSubQuery} from ${table} i INNER JOIN imageitems on i.image=imageitems.imageId 
-      INNER JOIN category c on i.category = c.id`
+      const rowSubQuery = "i.id,i.name AS 'name',i.price,i.description,i.quantity,c.name AS 'condition' ,ct.name AS 'category',i.create_at,i.update_at"
+      const subQuery = `SELECT ${rowSubQuery} FROM products i INNER JOIN categories ct on i.category_id = ct.id INNER JOIN conditions c ON i.condition_id = c.id`
       db.query(`SELECT * FROM (${subQuery}) as table_1 WHERE ${Search[0]} LIKE "%${Search[1]}%" ORDER BY create_at DESC LIMIT ${arr[0]} OFFSET ${arr[0]}`, (_err, result, _field) => {
         if (_err) {
           reject(_err)
@@ -89,7 +88,7 @@ module.exports = {
       })
     })
   },
-  createImageModel: (arr,id) => {
+  createImageModel: (arr) => {
     return new Promise((resolve, reject) => {
       db.query('INSERT INTO product_picture (produkId,url) VALUES ?', [arr], (_err, result, _field) => {
         if (!_err) {

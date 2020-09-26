@@ -30,7 +30,7 @@ module.exports = {
 
         if (result.affectedRows > 0) {
           const images = req.files.map(data => {
-            return [result.insertId,data.path.replace(/\\/g, '/')]
+            return [result.insertId, data.path.replace(/\\/g, '/')]
           })
           console.log(images)
           const { affectedRows } = await createImageModel(images, result.insertId)
@@ -41,7 +41,7 @@ module.exports = {
               message: 'Item has been created',
               data: {
                 id: result.insertId,
-                ...req.body,
+                ...req.body
               }
             })
           } else {
