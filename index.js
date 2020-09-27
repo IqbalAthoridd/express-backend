@@ -21,7 +21,7 @@ app.use(bodyParser.urlencoded({
 app.use('/item', verifyAccessToken, itemRoute)
 app.use('/category', categoryRoute)
 app.use('/auth', authRouter)
-app.use('/cart', cartRouter)
+app.use('/cart', verifyAccessToken, cartRouter)
 app.use('/public', publicRoute)
 
 app.listen(8080, () => {
