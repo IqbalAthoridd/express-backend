@@ -39,10 +39,15 @@ const updatePartialsSchema = Joi.object({
   category_id: Joi.number()
 })
 
+const conditionSchema = Joi.object({
+  name: Joi.string().trim().required()
+})
+
 module.exports = {
   categorySchema,
   registerSchema,
   updateSchema,
   createItemSchema,
-  updatePartialsSchema
+  updatePartialsSchema,
+  conditionSchema
 }
