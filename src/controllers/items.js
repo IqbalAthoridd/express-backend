@@ -140,7 +140,7 @@ module.exports = {
 
     if (dataResult.length) {
       const result = await deleteItemModel(id)
-      result.affectedRow
+      result.affectedRows
         ? response(res, 'data has been deleted')
         : response(res, 'Failed to delete', {}, false, 400)
     } else {
