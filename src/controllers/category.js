@@ -30,7 +30,7 @@ module.exports = {
   getCategory: async (req, res) => {
     try {
       const { id } = req.params
-      const result = await getDataById(table, id)
+      const result = await getDataById(table, { id })
       result.length
         ? response(res, 'Category found', { data: result })
         : response(res, `Data with id ${id} does't exist`)
