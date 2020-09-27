@@ -1,30 +1,29 @@
 const db = require('../helpers/db')
-const table = 'cart'
 module.exports = {
-  createCartModel: (user, item, total, cb) => {
-    db.query(`INSERT INTO ${table} (userId,itemId,total) VALUES (${+(user)},${+item},${+total})`, (_err, result, _field) => {
-      cb(result)
+  getCartModel: (data) => {
+    return new Promise((resolve, reject) => {
+      const subQuery = 'SELECT c.userId,p.name,p.price,c.picture,c.total,p.price*c.total as "summary" FROM carts c INNER JOIN products p ON c.productId = p.id'
+      db.query(`SELECT * FROM (${subQuery}) as table_1 WHERE ? LIMIT ? OFFSET ?`
+        , data, (_err, result, _field) => {
+          if (_err) {
+            reject(_err)
+          } else {
+            resolve(result)
+          }
+        })
     })
   },
-  getCartItemModel: (id, cb) => {
-    db.query(`SELECT * FROM ${table} WHERE itemId = ${id}`, (_err, result, _field) => {
-      cb(result)
-    })
-  },
-  getCartModel: (id, cb) => {
-    db.query(`SELECT name, total, price, price * total as Summary FROM items INNER JOIN ${table} ON items.id = cart.itemId WHERE userid =${id}`
-      , (_err, result, _field) => {
-        cb(result)
-      })
-  },
-  deleteCartModel: (id, cb) => {
-    db.query(`DELETE FROM ${table} WHERE cartId = ${id}`, (_err, result, _field) => {
-      cb(result)
-    })
-  },
-  updateTotalModel: (id, total, cb) => {
-    db.query(`UPDATE ${table} SET total = ${total} WHERE cartId=${id}`, (_err, result, _field) => {
-      cb(result)
+  countCartModel: (data) => {
+    return new Promise((resolve, reject) => {
+      const subQuery = 'SELECT c.userId,p.name,p.price,c.picture,c.total FROM carts c INNER JOIN products p ON c.productId = p.id'
+      db.query(`SELECT COUNT('*') as count FROM (${subQuery}) as table_1 WHERE ?`,
+        data, (_err, result, _field) => {
+          if (_err) {
+            reject(_err)
+          } else {
+            resolve(result)
+          }
+        })
     })
   }
 
