@@ -1,7 +1,8 @@
 const Joi = require('joi')
 
 const categorySchema = Joi.object({
-  name: Joi.string().min(4).trim().replace("'", '\'').required()
+  name: Joi.string().min(4).trim().replace("'", '\'').required(),
+  description: Joi.string().min(5).trim().replace("'", '\'').required()
 })
 
 const registerSchema = Joi.object({
