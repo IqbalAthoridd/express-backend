@@ -1,41 +1,40 @@
 const qs = require('querystring')
+const { pagination } = require('../helpers/pagination')
+const { response } = require('../helpers/response')
+const { upload2 } = require('../helpers/init_multer')
 
 const { categorySchema } = require('../helpers/validation_schema')
 
 const {
   getCategorModel,
-  createCategoryModel,
   deleteCategoryModel,
   getAllCategoryModel,
   countGetCategoryModel,
   updateCategoryModel
 } = require('../models/category')
+const { createData } = require('../helpers/database_query')
+const table = 'categories'
 
 module.exports = {
   createCategory: async (req, res) => {
-    try {
-      const data = await categorySchema.validateAsync(req.body)
-
-      createCategoryModel(data, result => {
-        if (result.affectedRows > 0) {
-          res.send({
-            success: true,
-            message: 'data created',
-            data: data
-          })
-        } else {
-          res.send({
-            success: false,
-            message: 'Internal Server Error'
-          })
+    upload2(req, res, async (_err) => {
+      try {
+        _err && response(res, _err.message, {}, false, 400)
+        let { path } = req.file
+        path = path.replace(/\\/g, '/')
+        let data = await categorySchema.validateAsync({ ...req.body })
+        data = {
+          ...data,
+          picture: path
         }
-      })
-    } catch (err) {
-      res.send({
-        success: false,
-        message: err.message
-      })
-    }
+        const { affectedRows } = await createData(table, data)
+        affectedRows
+          ? response(res, 'Category created!', { data }, true, 201)
+          : response(res, 'Failed Created!', {}, false, 400)
+      } catch (err) {
+        err.isJoi === true && response(res, err.message, false, 400)
+      }
+    })
   },
   getCategory: (req, res) => {
     const { id } = req.params
