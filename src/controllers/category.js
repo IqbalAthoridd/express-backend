@@ -6,12 +6,11 @@ const { upload2 } = require('../helpers/init_multer')
 const { categorySchema } = require('../helpers/validation_schema')
 
 const {
-  deleteCategoryModel,
   getAllCategoryModel,
   countGetCategoryModel,
   updateCategoryModel
 } = require('../models/category')
-const { createData, getDataById } = require('../helpers/database_query')
+const { createData, getDataById, deleteDataById } = require('../helpers/database_query')
 const table = 'categories'
 
 module.exports = {
@@ -46,21 +45,16 @@ module.exports = {
       console.log(error)
     }
   },
-  deleteCategory: (req, res) => {
-    const { id } = req.params
-    deleteCategoryModel(id, result => {
-      if (result.affectedRows > 0) {
-        res.send({
-          success: true,
-          message: 'Category has deleted'
-        })
-      } else {
-        res.send({
-          success: false,
-          message: `Data with id ${id} does't exist`
-        })
-      }
-    })
+  deleteCategory: async (req, res) => {
+    try {
+      const { id } = req.params
+      const { affectedRows } = await deleteDataById(table, id)
+      affectedRows
+        ? response(res, 'Data has been deleted')
+        : response(res, `Data with id ${id} does't exist`, {}, false, 404)
+    } catch (error) {
+
+    }
   },
   getAllCategory: (req, res) => {
     let { search = '', limit = 5, page = 1 } = req.query
