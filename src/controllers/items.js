@@ -1,8 +1,8 @@
 
-const qs = require('querystring')
 const { upload } = require('../helpers/init_multer')
 const { createItemSchema, updatePartialsSchema } = require('../helpers/validation_schema')
 const { response } = require('../helpers/response')
+const { pagination } = require('../helpers/pagination')
 
 const {
   getItemModel,
@@ -50,26 +50,12 @@ module.exports = {
       : response(res, "Data does't exist", {}, false, 404)
   },
   getItem: async (req, res) => {
-    let { page, limit, search, sortBy, sortTo = 'ASC', sortTime, price = 0 } = req.query
+    const { page = 1, limit = 5, search, sortBy } = req.query
+
     let searchKey = ''
     let searchValue = ''
     let sortName = ''
     let sortValue = ''
-
-    if (price === '') {
-      price = 0
-    }
-
-    if (sortTime === undefined) {
-      sortTime = ''
-    } else {
-      sortTime = `ORDER BY create_at ${sortTime}`
-    }
-
-    if (typeof sortBy === 'object') {
-      sortName = Object.keys(sortBy)[0]
-      sortValue = Object.values(sortBy)[0]
-    }
 
     if (typeof search === 'object') {
       searchKey = Object.keys(search)[0]
@@ -79,63 +65,37 @@ module.exports = {
       searchValue = search || ''
     }
 
-    if (!limit) {
-      limit = 5
+    if (typeof sortBy === 'object') {
+      sortName = Object.keys(sortBy)[0]
+      sortValue = Object.values(sortBy)[0]
     } else {
-      limit = parseInt(limit)
+      sortName = 'creat_at'
+      sortValue = 'ASC'
     }
-    if (!page) {
-      page = 1
-    } else {
-      page = parseInt(page)
-    }
+
     const offset = (page - 1) * limit
 
-    let sort = `HAVING ${sortName} = ${sortValue}`
-    if (sortBy === undefined) {
-      sort = ''
-    }
+    const data = [
+      ['%' + searchValue + '%'],
+      +limit,
+      offset
+    ]
 
-    const result = await searchItemModel([searchKey, searchValue], [limit, offset], sort, sortTo,
-      sortTime, price)
-    if (result) {
-      const pageInfo = {
-        count: 0,
-        pages: 0,
-        currentPage: page,
-        limitPerPage: limit,
-        nextLink: null,
-        prevLink: null
-      }
-      if (result.length) {
-        const data = await countGetItemModel([searchKey, searchValue], sort)
-        const { count } = data[0]
-        pageInfo.count = count
-        pageInfo.pages = Math.ceil(count / limit)
-        const { pages, currentPage } = pageInfo
-        if (currentPage < pages) {
-          pageInfo.nextLink = `http://localhost:8080/items?${qs.stringify({ ...req.query, ...{ page: page + 1 } })}`
-        }
-
-        if (currentPage > 1) {
-          pageInfo.prevLink = `http://localhost:8080/items?${qs.stringify({ ...req.query, ...{ page: page - 1 } })}`
-        }
-        res.send({
-          success: true,
-          message: 'List of item',
-          data: result,
-          pageInfo
-        })
-      } else {
-        res.send({
-          success: false,
-          message: 'Data not found'
-        })
-      }
+    const result = await searchItemModel(searchKey, [sortName, sortValue], data)
+    if (result.length) {
+      const data = await countGetItemModel([searchKey, searchValue])
+      const { count } = data[0]
+      const pageInfo = await pagination(req.query, page, limit, count)
+      res.send({
+        success: true,
+        message: 'List of item',
+        data: result,
+        pageInfo
+      })
     } else {
-      res.status(500).send({
+      res.send({
         success: false,
-        messgae: 'Internal Server Error'
+        message: 'Data not found'
       })
     }
   },
