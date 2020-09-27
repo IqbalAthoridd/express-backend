@@ -22,5 +22,16 @@ module.exports = {
         reject(_err)
       })
     })
+  },
+  deleteDataById: (table, id) => {
+    return new Promise((resolve, reject) => {
+      db.query('DELETE FROM ?? WHERE id=?', [table, id], (_err, result, _field) => {
+        if (_err) {
+          reject(_err)
+        } else {
+          resolve(result)
+        }
+      })
+    })
   }
 }
