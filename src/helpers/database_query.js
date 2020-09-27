@@ -15,7 +15,7 @@ module.exports = {
   },
   getDataById: (table, id) => {
     return new Promise((resolve, reject) => {
-      db.query('SELECT * FROM ?? WHERE id = ?', [table, id], (_err, result, _field) => {
+      db.query('SELECT * FROM ?? WHERE ?', [table, id], (_err, result, _field) => {
         if (!_err) {
           resolve(result)
         }
