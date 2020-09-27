@@ -45,5 +45,28 @@ module.exports = {
         }
       })
     })
+  },
+  listData: (data, sortTo) => {
+    return new Promise((resolve, reject) => {
+      db.query(`SELECT * FROM ?? WHERE name LIKE ? ORDER BY name ${sortTo} LIMIT ? OFFSET ?`,
+        data, (_err, result, _field) => {
+          if (_err) {
+            reject(_err)
+          } else {
+            resolve(result)
+          }
+        })
+    })
+  },
+  countData: (data) => {
+    return new Promise((resolve, reject) => {
+      db.query('SELECT COUNT("*") as count FROM ?? WHERE name LIKE ?', data, (_err, result, _field) => {
+        if (_err) {
+          reject(_err)
+        } else {
+          resolve(result)
+        }
+      })
+    })
   }
 }
