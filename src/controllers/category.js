@@ -7,10 +7,9 @@ const { categorySchema } = require('../helpers/validation_schema')
 
 const {
   getAllCategoryModel,
-  countGetCategoryModel,
-  updateCategoryModel
+  countGetCategoryModel
 } = require('../models/category')
-const { createData, getDataById, deleteDataById } = require('../helpers/database_query')
+const { createData, getDataById, deleteDataById, updateData } = require('../helpers/database_query')
 const table = 'categories'
 
 module.exports = {
@@ -105,27 +104,13 @@ module.exports = {
   updateCategory: async (req, res) => {
     try {
       const { id } = req.params
-      const { name } = req.body
-      const data = await categorySchema.validateAsync({ name })
-      updateCategoryModel(id, data, result => {
-        if (result.affectedRows > 0) {
-          res.send({
-            success: true,
-            message: 'Data updated',
-            data: { id, name }
-          })
-        } else {
-          res.send({
-            success: false,
-            message: `Data with id ${id} does't exist`
-          })
-        }
-      })
+      const data = await categorySchema.validateAsync({ ...req.body })
+      const { affectedRows } = await updateData(table, id, data)
+      affectedRows
+        ? response(res, 'Category updated!')
+        : response(res, `Category with id ${id} does't exist`, {}, false, 404)
     } catch (err) {
-      res.send({
-        success: false,
-        message: err.message
-      })
+      err.isJoi === true && response(res, err.message, false, 400)
     }
   }
 }
