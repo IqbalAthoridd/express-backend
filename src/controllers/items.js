@@ -86,17 +86,9 @@ module.exports = {
       const data = await countGetItemModel([searchKey, searchValue])
       const { count } = data[0]
       const pageInfo = await pagination(req.query, page, limit, count)
-      res.send({
-        success: true,
-        message: 'List of item',
-        data: result,
-        pageInfo
-      })
+      response(res, 'List of Products', { data: result, pageInfo })
     } else {
-      res.send({
-        success: false,
-        message: 'Data not found'
-      })
+      response(res, 'Data not found', {}, false, 404)
     }
   },
   updateItem: async (req, res) => {
