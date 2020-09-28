@@ -13,6 +13,7 @@ const {
   countGetItemModel,
   createImageModel
 } = require('../models/items')
+const { createData } = require('../helpers/database_query')
 
 module.exports = {
   createItem: async (req, res) => {
@@ -20,15 +21,18 @@ module.exports = {
       try {
         _err && response(res, _err.message, {}, false, 400)
         const data = await createItemSchema.validateAsync({ ...req.body })
-        const result = await await createItemModel(data)
+        const { colorName, hexcode, name, price, description, quantity, condition_id, category_id } = data
+        const result = await await createItemModel({ name, price, description, quantity, condition_id, category_id })
 
         if (result.affectedRows) {
+          const colors = await createData('product_colors', { product_id: result.insertId, name: colorName, hexcode })
+          console.log(colors)
           const images = req.files.map(data => {
             return [result.insertId, data.path.replace(/\\/g, '/')]
           })
           const { affectedRows } = await createImageModel(images, result.insertId)
 
-          affectedRows
+          affectedRows && result.affectedRows
             ? response(res, 'item has been cretaed', { data: { id: result.id, ...req.body } })
             : response(res, 'Internal Server Error', {}, false, 500)
         } else {
