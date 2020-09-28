@@ -50,6 +50,11 @@ const colorSchema = Joi.object({
   hexcode: Joi.string().trim().required()
 })
 
+const roleSchema = Joi.object({
+  name: Joi.string().trim().required(),
+  description: Joi.string().trim().required()
+})
+
 module.exports = {
   categorySchema,
   registerSchema,
@@ -57,5 +62,6 @@ module.exports = {
   createItemSchema,
   updatePartialsSchema,
   conditionSchema,
-  colorSchema
+  colorSchema,
+  roleSchema
 }
