@@ -27,7 +27,9 @@ const createItemSchema = Joi.object({
   description: Joi.string().trim().replace("'", '\'').required(),
   quantity: Joi.number().required(),
   condition_id: Joi.number().required(),
-  category_id: Joi.number().required()
+  category_id: Joi.number().required(),
+  colorName: Joi.string().trim().required(),
+  hexcode: Joi.string().trim().required()
 })
 
 const updatePartialsSchema = Joi.object({
@@ -43,11 +45,17 @@ const conditionSchema = Joi.object({
   name: Joi.string().trim().required()
 })
 
+const colorSchema = Joi.object({
+  name: Joi.string().trim().required(),
+  hexcode: Joi.string().trim().required()
+})
+
 module.exports = {
   categorySchema,
   registerSchema,
   updateSchema,
   createItemSchema,
   updatePartialsSchema,
-  conditionSchema
+  conditionSchema,
+  colorSchema
 }
