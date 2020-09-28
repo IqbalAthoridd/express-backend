@@ -9,6 +9,7 @@ const authRouter = require('./src/routes/auth')
 const cartRouter = require('./src/routes/cart')
 const publicRoute = require('./src/routes/public')
 const conditionRoute = require('./src/routes/condition')
+const colorRoute = require('./src/routes/color')
 require('dotenv').config()
 
 const { verifyAccessToken } = require('./src/middleware/auth')
@@ -25,6 +26,7 @@ app.use('/auth', authRouter)
 app.use('/cart', verifyAccessToken, cartRouter)
 app.use('/public', publicRoute)
 app.use('/condition', conditionRoute)
+app.use('/color', colorRoute)
 
 app.listen(8080, () => {
   console.log('running on port:8000')
