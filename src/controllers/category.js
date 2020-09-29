@@ -8,24 +8,23 @@ const table = 'categories'
 
 module.exports = {
   createCategory: async (req, res) => {
-    upload2(req, res, async (_err) => {
-      try {
-        _err && response(res, _err.message, {}, false, 400)
-        let { path } = req.file
-        path = path.replace(/\\/g, '/')
-        let data = await categorySchema.validateAsync({ ...req.body })
-        data = {
-          ...data,
-          picture: path
-        }
-        const { affectedRows } = await createData(table, data)
-        affectedRows
-          ? response(res, 'Category created!', { data }, true, 201)
-          : response(res, 'Failed Created!', {}, false, 400)
-      } catch (err) {
-        err.isJoi === true && response(res, err.message, false, 400)
+    try {
+      req.file === undefined && response(res, 'Image must be filled', {}, false, 400)
+      let { path } = req.file
+      path = path.replace(/\\/g, '/')
+      let data = await categorySchema.validateAsync({ ...req.body })
+      data = {
+        ...data,
+        picture: path
       }
-    })
+      const { affectedRows } = await createData(table, data)
+      console.log(affectedRows)
+      affectedRows
+        ? response(res, 'Category created!', { data }, true, 201)
+        : response(res, 'Failed Created!', {}, false, 400)
+    } catch (err) {
+      err.isJoi === true && response(res, err.message, false, 400)
+    }
   },
   getCategory: async (req, res) => {
     try {
