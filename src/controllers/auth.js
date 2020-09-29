@@ -1,47 +1,45 @@
 const { registerSchema, updateSchema } = require('../helpers/validation_schema')
 const bcrypt = require('bcrypt')
 const { signAcessToken } = require('../middleware/auth')
-const { upload2 } = require('../helpers/init_multer')
 const { response } = require('../helpers/response')
 const { createData, getDataById, updateData } = require('../helpers/database_query')
 const table = 'users'
 
 module.exports = {
   authRegister: async (req, res) => {
-    upload2(req, res, async (_err) => {
-      try {
-        let { path } = req.file
-        path = path.replace(/\\/g, '/')
-        const { error, value } = await registerSchema.validate({ ...req.body })
-        error && response(res, error.details[0].message, {}, false, 400)
-        const salt = 10
-        value.password = await bcrypt.hash(value.password, salt)
-        let dataResult = await getDataById(table, { email: value.email })
-        if (!dataResult.length) {
-          dataResult = [{ email: '' }]
-        }
-        if (dataResult[0].email !== value.email) {
-          const result = await createData(table, { ...value, picture: path })
-          if (result.affectedRows) {
-            response(res, 'User Created',
-              {
-                data: {
-                  id: result.insertId,
-                  ...value,
-                  password: undefined,
-                  avatar: path
-                }
-              })
-          } else {
-            response(res, 'Failed create user tyr again!', {}, false, 400)
-          }
-        } else {
-          response(res, `Email ${value.email} already use, try another email`, {}, false, 400)
-        }
-      } catch (err) {
-        console.log(err)
+    try {
+      req.file === undefined && response(res, 'Image must be filled', {}, false, 400)
+      let { path } = req.file
+      path = path.replace(/\\/g, '/')
+      const { error, value } = await registerSchema.validate({ ...req.body })
+      error && response(res, error.details[0].message, {}, false, 400)
+      const salt = 10
+      value.password = await bcrypt.hash(value.password, salt)
+      let dataResult = await getDataById(table, { email: value.email })
+      if (!dataResult.length) {
+        dataResult = [{ email: '' }]
       }
-    })
+      if (dataResult[0].email !== value.email) {
+        const result = await createData(table, { ...value, picture: path })
+        if (result.affectedRows) {
+          response(res, 'User Created',
+            {
+              data: {
+                id: result.insertId,
+                ...value,
+                password: undefined,
+                avatar: path
+              }
+            })
+        } else {
+          response(res, 'Failed create user tyr again!', {}, false, 400)
+        }
+      } else {
+        response(res, `Email ${value.email} already use, try another email`, {}, false, 400)
+      }
+    } catch (err) {
+      console.log(err)
+    }
   },
   authLogin: async (req, res) => {
     try {
