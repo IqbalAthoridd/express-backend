@@ -26,9 +26,9 @@ app.use('/category', categoryRoute)
 app.use('/auth', authRouter)
 app.use('/cart', verifyAccessToken, cartRouter)
 app.use('/public', publicRoute)
-app.use('/condition', conditionRoute)
-app.use('/color', colorRoute)
-app.use('/role', roleRoute)
+app.use('/condition', verifyAccessToken, conditionRoute)
+app.use('/color', verifyAccessToken, colorRoute)
+app.use('/role', verifyAccessToken, roleRoute)
 
 app.listen(8080, () => {
   console.log('running on port:8000')

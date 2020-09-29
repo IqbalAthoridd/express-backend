@@ -3,6 +3,7 @@ const { upload } = require('../helpers/init_multer')
 const { createItemSchema, updatePartialsSchema } = require('../helpers/validation_schema')
 const { response } = require('../helpers/response')
 const { pagination } = require('../helpers/pagination')
+const table = 'products'
 
 const {
   getItemModel,
@@ -13,7 +14,7 @@ const {
   countGetItemModel,
   createImageModel
 } = require('../models/items')
-const { createData } = require('../helpers/database_query')
+const { createData, updateData } = require('../helpers/database_query')
 
 module.exports = {
   createItem: async (req, res) => {
@@ -26,13 +27,12 @@ module.exports = {
 
         if (result.affectedRows) {
           const colors = await createData('product_colors', { product_id: result.insertId, name: colorName, hexcode })
-          console.log(colors)
           const images = req.files.map(data => {
             return [result.insertId, data.path.replace(/\\/g, '/')]
           })
           const { affectedRows } = await createImageModel(images, result.insertId)
 
-          affectedRows && result.affectedRows
+          affectedRows && colors.affectedRows
             ? response(res, 'item has been cretaed', { data: { id: result.id, ...req.body } })
             : response(res, 'Internal Server Error', {}, false, 500)
         } else {
@@ -99,10 +99,12 @@ module.exports = {
     try {
       const { id } = req.params
       const data = await createItemSchema.validateAsync({ ...req.body })
+      const { colorName, hexcode, name, price, description, quantity, condition_id, category_id } = data
       const dataResult = await getItemModel(id)
       if (dataResult.length) {
-        const result = await updateItemModel(id, data)
-        result.affectedRows
+        const colors = await updateData('product_colors', id, { name: colorName, hexcode })
+        const result = await updateData(table, id, { name, price, description, quantity, condition_id, category_id })
+        result.affectedRows && colors.affectedRows
           ? response(res, 'Data updated !')
           : response(res, 'Failed to update', {}, false, 500)
       } else {
