@@ -41,7 +41,19 @@ const upload2 = multer({
 
 }).single('avatar', 1)
 
+const upload3 = multer({
+  storage: storage,
+  limits: size,
+  fileFilter: (req, file, cb) => {
+    if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+      return cb(new Error('The uploaded file must be an image'), false)
+    }
+    cb(null, true)
+  }
+})
+
 module.exports = {
   upload,
-  upload2
+  upload2,
+  upload3
 }
