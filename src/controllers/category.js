@@ -1,6 +1,5 @@
 const { pagination } = require('../helpers/pagination')
 const { response } = require('../helpers/response')
-const { upload2 } = require('../helpers/init_multer')
 
 const { categorySchema } = require('../helpers/validation_schema')
 const { createData, getDataById, deleteDataById, updateData, listData, countData } = require('../helpers/database_query')
