@@ -1,6 +1,6 @@
 
 const { upload } = require('../helpers/init_multer')
-const { createItemSchema, updatePartialsSchema } = require('../helpers/validation_schema')
+const { createItemSchema, updatePartialsSchema, colorSchema } = require('../helpers/validation_schema')
 const { response } = require('../helpers/response')
 const { pagination } = require('../helpers/pagination')
 const table = 'products'
@@ -14,7 +14,7 @@ const {
   countGetItemModel,
   createImageModel
 } = require('../models/items')
-const { createData, updateData } = require('../helpers/database_query')
+const { createData, updateData, getDataById, updateDataPart } = require('../helpers/database_query')
 
 module.exports = {
   createItem: async (req, res) => {
@@ -117,11 +117,29 @@ module.exports = {
   updatePatrialItem: async (req, res) => {
     try {
       const { id } = req.params
+      // const { colorName, hexcode,name,price,description,condition_id,category_id } = req.body
       const data = await updatePartialsSchema.validateAsync({ ...req.body })
-      const result = await getItemModel(id)
+      const result = await getDataById(table, { id })
       if (result.length) {
-        const update = await updateItemModel(id, data)
-        update.affectedRows
+        let update = {}
+        let colors = {}
+        if (data.colorName === undefined && data.hexcode === undefined) {
+          update = await updateData(table, id, data)
+        } else {
+          delete data.colorName
+          delete data.hexcode
+          update = await updateData(table, id, data)
+        }
+
+        if (data.colorName === undefined) {
+          colors = await updateDataPart('product_colors', { product_id: id }, { hexcode: data.hexcode })
+        } else if (data.hexcode === undefined) {
+          colors = await updateDataPart('product_colors', { product_id: id }, { name: data.colorName })
+        } else {
+          colors = await updateDataPart('product_colors', { product_id: id }, { nam: data.colorName, hexcode: data.hexcode })
+        }
+
+        update.affectedRows || colors.affectedRows
           ? response(res, 'Data updated !')
           : response(res, 'Failed to update', {}, false, 500)
       } else {

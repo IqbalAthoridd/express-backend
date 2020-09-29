@@ -68,5 +68,17 @@ module.exports = {
         }
       })
     })
+  },
+  updateDataPart: (table, id, data) => {
+    return new Promise((resolve, reject) => {
+      db.query('UPDATE ?? SET ? WHERE ?', [table, data, id], (_err, result, _field) => {
+        console.log(_err)
+        if (_err) {
+          reject(_err)
+        } else {
+          resolve(result)
+        }
+      })
+    })
   }
 }

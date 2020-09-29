@@ -39,7 +39,7 @@ const updatePartialsSchema = Joi.object({
   quantity: Joi.number(),
   condition_id: Joi.number(),
   category_id: Joi.number(),
-  colorName: Joi.string.trim(),
+  colorName: Joi.string().trim(),
   hexcode: Joi.string().trim()
 })
 
@@ -48,8 +48,8 @@ const conditionSchema = Joi.object({
 })
 
 const colorSchema = Joi.object({
-  name: Joi.string().trim().required(),
-  hexcode: Joi.string().trim().required()
+  colorName: Joi.string().trim(),
+  hexcode: Joi.string().trim()
 })
 
 const roleSchema = Joi.object({
