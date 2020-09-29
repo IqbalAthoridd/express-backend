@@ -38,7 +38,9 @@ const updatePartialsSchema = Joi.object({
   description: Joi.string().trim().replace("'", '\''),
   quantity: Joi.number(),
   condition_id: Joi.number(),
-  category_id: Joi.number()
+  category_id: Joi.number(),
+  colorName: Joi.string.trim(),
+  hexcode: Joi.string().trim()
 })
 
 const conditionSchema = Joi.object({
