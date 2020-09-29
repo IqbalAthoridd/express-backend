@@ -30,6 +30,22 @@ app.use('/condition', verifyAccessToken, conditionRoute)
 app.use('/color', verifyAccessToken, colorRoute)
 app.use('/role', verifyAccessToken, roleRoute)
 
+// Error handler http request
+app.use(async (req, res, next) => {
+  next(new Error('Not Found'))
+})
+
+app.use((err, req, res, next) => {
+  res.status(err.status || 500)
+  res.send({
+    error: {
+      succes: false,
+      status: err.status || 500,
+      message: err.message
+    }
+  })
+})
+
 app.listen(8080, () => {
   console.log('running on port:8000')
 })
