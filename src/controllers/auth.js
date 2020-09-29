@@ -64,23 +64,26 @@ module.exports = {
     }
   },
   editUser: async (req, res) => {
-    upload2(req, res, async (_err) => {
-      try {
-        const { id } = req.params
+    try {
+      const { id } = req.params
+      let data = await updateSchema.validateAsync({ ...req.body })
+      if (req.file !== undefined) {
         let { path } = req.file
         path = path.replace(/\\/g, '/')
-        const data = await updateSchema.validateAsync({ ...req.body })
-
-        const { affectedRows } = await updateData(table, id, { ...data, picture: path })
-        affectedRows
-          ? response(res, 'Data updated')
-          : response(res, 'Failed updated try again', {}, false, 400)
-      } catch (err) {
-        res.send({
-          success: false,
-          message: err.message
-        })
+        data = {
+          ...data,
+          picture: path
+        }
       }
-    })
+      const { affectedRows } = await updateData(table, id, data)
+      affectedRows
+        ? response(res, 'Data updated')
+        : response(res, 'Failed updated try again', {}, false, 400)
+    } catch (err) {
+      res.send({
+        success: false,
+        message: err.message
+      })
+    }
   }
 }
