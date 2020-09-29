@@ -19,7 +19,7 @@ module.exports = {
     }
 
     if (currentPage > 1) {
-      pageInfo.prevLink = `http://localhost:8080/items${qs.stringify({ ...query, ...{ page: page - 1 } })}`
+      pageInfo.prevLink = `http://localhost:8080/items?${qs.stringify({ ...query, ...{ page: page - 1 } })}`
     }
     return pageInfo
   }
