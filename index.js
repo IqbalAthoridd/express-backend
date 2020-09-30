@@ -11,6 +11,7 @@ const publicRoute = require('./src/routes/public')
 const conditionRoute = require('./src/routes/condition')
 const colorRoute = require('./src/routes/color')
 const roleRoute = require('./src/routes/role')
+const adressRoute = require('./src/routes/adress')
 require('dotenv').config()
 
 const { verifyAccessToken } = require('./src/middleware/auth')
@@ -22,13 +23,14 @@ app.use(bodyParser.urlencoded({
 }))
 
 app.use('/item', verifyAccessToken, itemRoute)
-app.use('/category', categoryRoute)
+app.use('/category', verifyAccessToken, categoryRoute)
 app.use('/auth', authRouter)
 app.use('/cart', verifyAccessToken, cartRouter)
 app.use('/public', publicRoute)
 app.use('/condition', verifyAccessToken, conditionRoute)
 app.use('/color', verifyAccessToken, colorRoute)
 app.use('/role', verifyAccessToken, roleRoute)
+app.use('/adress', verifyAccessToken, adressRoute)
 
 // Error handler http request
 app.use(async (req, res, next) => {
