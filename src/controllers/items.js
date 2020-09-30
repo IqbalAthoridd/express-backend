@@ -1,6 +1,5 @@
 
-const { upload } = require('../helpers/init_multer')
-const { createItemSchema, updatePartialsSchema, colorSchema } = require('../helpers/validation_schema')
+const { createItemSchema, updatePartialsSchema } = require('../helpers/validation_schema')
 const { response } = require('../helpers/response')
 const { pagination } = require('../helpers/pagination')
 const table = 'products'
@@ -8,7 +7,6 @@ const table = 'products'
 const {
   getItemModel,
   createItemModel,
-  updateItemModel,
   deleteItemModel,
   searchItemModel,
   countGetItemModel,
@@ -18,30 +16,27 @@ const { createData, updateData, getDataById, updateDataPart } = require('../help
 
 module.exports = {
   createItem: async (req, res) => {
-    upload(req, res, async (_err) => {
-      try {
-        _err && response(res, _err.message, {}, false, 400)
-        const data = await createItemSchema.validateAsync({ ...req.body })
-        const { colorName, hexcode, name, price, description, quantity, condition_id, category_id } = data
-        const result = await await createItemModel({ name, price, description, quantity, condition_id, category_id })
+    try {
+      const data = await createItemSchema.validateAsync({ ...req.body })
+      const { colorName, hexcode, name, price, description, quantity, condition_id, category_id } = data
+      const result = await await createItemModel({ name, price, description, quantity, condition_id, category_id })
 
-        if (result.affectedRows) {
-          const colors = await createData('product_colors', { product_id: result.insertId, name: colorName, hexcode })
-          const images = req.files.map(data => {
-            return [result.insertId, data.path.replace(/\\/g, '/')]
-          })
-          const { affectedRows } = await createImageModel(images, result.insertId)
+      if (result.affectedRows) {
+        const colors = await createData('product_colors', { product_id: result.insertId, name: colorName, hexcode })
+        const images = req.files.map(data => {
+          return [result.insertId, data.path.replace(/\\/g, '/')]
+        })
+        const { affectedRows } = await createImageModel(images, result.insertId)
 
-          affectedRows && colors.affectedRows
-            ? response(res, 'item has been cretaed', { data: { id: result.id, ...req.body } })
-            : response(res, 'Internal Server Error', {}, false, 500)
-        } else {
-          response(res, 'Internal Server Error', {}, false, 500)
-        }
-      } catch (err) {
-        err.isJoi === true && response(res, err.message, false, 400)
+        affectedRows && colors.affectedRows
+          ? response(res, 'item has been cretaed', { data: { id: result.id, ...req.body } })
+          : response(res, 'Internal Server Error', {}, false, 500)
+      } else {
+        response(res, 'Internal Server Error', {}, false, 500)
       }
-    })
+    } catch (err) {
+      err.isJoi === true && response(res, err.message, false, 400)
+    }
   },
 
   getDetailItem: async (req, res) => {
