@@ -4,29 +4,29 @@ const { signAcessToken } = require('../middleware/auth')
 const { response } = require('../helpers/response')
 const { createData, getDataById, updateData } = require('../helpers/database_query')
 const table = 'users'
+const fs = require('fs')
 
 module.exports = {
   authRegister: async (req, res) => {
     try {
       req.file === undefined && response(res, 'Image must be filled', {}, false, 400)
-      let { path } = req.file
+      var { path } = req.file
       path = path.replace(/\\/g, '/')
-      const { error, value } = await registerSchema.validate({ ...req.body })
-      error && response(res, error.details[0].message, {}, false, 400)
+      const data = await registerSchema.validateAsync({ ...req.body })
       const salt = 10
-      value.password = await bcrypt.hash(value.password, salt)
-      let dataResult = await getDataById(table, { email: value.email })
+      data.password = await bcrypt.hash(data.password, salt)
+      let dataResult = await getDataById(table, { email: data.email })
       if (!dataResult.length) {
         dataResult = [{ email: '' }]
       }
-      if (dataResult[0].email !== value.email) {
-        const result = await createData(table, { ...value, picture: path })
+      if (dataResult[0].email !== data.email) {
+        const result = await createData(table, { ...data, picture: path })
         if (result.affectedRows) {
           response(res, 'User Created',
             {
               data: {
                 id: result.insertId,
-                ...value,
+                ...data,
                 password: undefined,
                 avatar: path
               }
@@ -35,10 +35,13 @@ module.exports = {
           response(res, 'Failed create user tyr again!', {}, false, 400)
         }
       } else {
-        response(res, `Email ${value.email} already use, try another email`, {}, false, 400)
+        response(res, `Email ${data.email} already use, try another email`, {}, false, 400)
       }
     } catch (err) {
-      console.log(err)
+      err.isJoi === true && response(res, err.message, false, 400)
+      fs.unlink(`${path}`, function (err) {
+        if (err) throw err
+      })
     }
   },
   authLogin: async (req, res) => {
