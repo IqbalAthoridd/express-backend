@@ -116,22 +116,22 @@ module.exports = {
       const data = await updatePartialsSchema.validateAsync({ ...req.body })
       const result = await getDataById(table, { id })
       if (result.length) {
-        let update = {}
         let colors = {}
+        if (data.colorName === undefined) {
+          colors = await updateDataPart('product_colors', { product_id: id }, { hexcode: data.hexcode })
+        } else if (data.hexcode === undefined) {
+          colors = await updateDataPart('product_colors', { product_id: id }, { name: data.colorName })
+        } else {
+          colors = await updateDataPart('product_colors', { product_id: id }, { name: data.colorName, hexcode: data.hexcode })
+        }
+        let update = {}
+
         if (data.colorName === undefined && data.hexcode === undefined) {
           update = await updateData(table, id, data)
         } else {
           delete data.colorName
           delete data.hexcode
           update = await updateData(table, id, data)
-        }
-
-        if (data.colorName === undefined) {
-          colors = await updateDataPart('product_colors', { product_id: id }, { hexcode: data.hexcode })
-        } else if (data.hexcode === undefined) {
-          colors = await updateDataPart('product_colors', { product_id: id }, { name: data.colorName })
-        } else {
-          colors = await updateDataPart('product_colors', { product_id: id }, { nam: data.colorName, hexcode: data.hexcode })
         }
 
         update.affectedRows || colors.affectedRows
