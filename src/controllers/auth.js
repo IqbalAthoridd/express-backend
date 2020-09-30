@@ -56,6 +56,7 @@ module.exports = {
         response(res, 'Invalid email or password', {}, false, 400)
       }
     } catch (err) {
+
     }
   },
   editUser: async (req, res) => {
