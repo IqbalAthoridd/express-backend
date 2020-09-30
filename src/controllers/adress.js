@@ -1,5 +1,5 @@
 const { response } = require('../helpers/response')
-const { createData, updateData } = require('../helpers/database_query')
+const { createData, updateData, deleteDataById } = require('../helpers/database_query')
 const { adreSchema } = require('../helpers/validation_schema')
 const table = 'user_adress'
 
@@ -37,6 +37,17 @@ module.exports = {
         : response(res, 'Failed updated', {}, false, 400)
     } catch (error) {
       error.isJoi === true && response(res, error.message, false, 400)
+    }
+  },
+  deleteAdress: async (req, res) => {
+    try {
+      const { id } = req.params
+      const { affectedRows } = await deleteDataById(table, id)
+      affectedRows
+        ? response(res, 'Adress deleted')
+        : response(res, 'Failed to delete', {}, false, 400)
+    } catch (error) {
+
     }
   }
 }
