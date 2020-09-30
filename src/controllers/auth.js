@@ -44,10 +44,8 @@ module.exports = {
       const { email, password } = req.body
       const result = await getDataById(table, { email })
       if (result.length) {
-        console.log(result)
         const { id, role_id } = result[0]
         const data = await bcrypt.compare(password, result[0].password)
-        console.log(id)
         if (data) {
           const token = await signAcessToken(id, role_id)
           response(res, 'Login success', { token })
@@ -58,7 +56,6 @@ module.exports = {
         response(res, 'Invalid email or password', {}, false, 400)
       }
     } catch (err) {
-      console.log(err)
     }
   },
   editUser: async (req, res) => {
