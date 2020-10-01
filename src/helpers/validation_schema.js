@@ -29,6 +29,14 @@ const updateSchema = Joi.object({
 
 })
 
+const updateSellerSchema = Joi.object({
+  store_name: Joi.string().min(4).max(20).trim().replace("'", '\''),
+  email: Joi.string().email().trim().lowercase().min(5).replace("'", '\''),
+  phone_number: Joi.number(),
+  description: Joi.string().trim()
+
+})
+
 const createItemSchema = Joi.object({
   name: Joi.string().min(2).trim().replace("'", '\'').required(),
   price: Joi.number().required(),
@@ -93,5 +101,6 @@ module.exports = {
   adreSchema,
   sellerregisterSchema,
   ratingSchema,
-  updateRatingSchema
+  updateRatingSchema,
+  updateSellerSchema
 }

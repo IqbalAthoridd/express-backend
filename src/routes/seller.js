@@ -2,8 +2,9 @@ const { Router } = require('express')
 const router = Router()
 const { upload } = require('../helpers/init_multer')
 const item = require('../controllers/items')
+const profile = require('../controllers/seller')
 
-router.post('/storeprofile')
+router.post('/storeprofile', profile.storeProfile)
 
 // Items for Seller
 router.post('/items', upload.array('picture'), item.createItem)
