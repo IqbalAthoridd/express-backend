@@ -72,6 +72,14 @@ const adreSchema = Joi.object({
   postal_code: Joi.string().trim().required(),
   city: Joi.string().trim().required()
 })
+const ratingSchema = Joi.object({
+  rating: Joi.number().required(),
+  comment: Joi.string().trim()
+})
+const updateRatingSchema = Joi.object({
+  rating: Joi.number(),
+  comment: Joi.string().trim()
+})
 
 module.exports = {
   categorySchema,
@@ -83,5 +91,7 @@ module.exports = {
   colorSchema,
   roleSchema,
   adreSchema,
-  sellerregisterSchema
+  sellerregisterSchema,
+  ratingSchema,
+  updateRatingSchema
 }

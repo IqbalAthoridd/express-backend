@@ -92,5 +92,17 @@ module.exports = {
           }
         })
     })
+  },
+  updateTwoCondst: (table, id1, id2, data) => {
+    return new Promise((resolve, reject) => {
+      db.query('UPDATE ?? SET ? WHERE ? AND ?', [table, data, id1, id2], (_err, result, _field) => {
+        console.log(_err)
+        if (_err) {
+          reject(_err)
+        } else {
+          resolve(result)
+        }
+      })
+    })
   }
 }
