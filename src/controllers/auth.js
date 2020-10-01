@@ -7,7 +7,7 @@ const table = 'users'
 const fs = require('fs')
 
 module.exports = {
-  authRegister: async (req, res) => {
+  customerRegister: async (req, res) => {
     try {
       const data = await registerSchema.validateAsync({ ...req.body })
       const salt = 10

@@ -12,9 +12,12 @@ const conditionRoute = require('./src/routes/condition')
 const colorRoute = require('./src/routes/color')
 const roleRoute = require('./src/routes/role')
 const adressRoute = require('./src/routes/adress')
+const sellerRoute = require('./src/routes/seller')
+const customerRoute = require('./src/routes/customer')
+const adminRoute = require('./src/routes/admin')
 require('dotenv').config()
 
-const { verifyAccessToken } = require('./src/middleware/auth')
+const { verifyAccessToken, verifySeller, verifyCustomer, verifyAdmin } = require('./src/middleware/auth')
 
 app.use(cors())
 
@@ -22,14 +25,17 @@ app.use(bodyParser.urlencoded({
   extended: false
 }))
 
-app.use('/item', verifyAccessToken, itemRoute)
-app.use('/category', verifyAccessToken, categoryRoute)
+app.use('/seller', verifyAccessToken, verifySeller, sellerRoute)
+app.use('/customer', verifyAccessToken, verifyCustomer, customerRoute)
+app.use('/admin', verifyAccessToken, verifyAdmin, adminRoute)
+app.use('/item', verifyAccessToken, verifyAdmin, itemRoute)
+app.use('/category', verifyAccessToken, verifyAdmin, categoryRoute)
 app.use('/auth', authRouter)
-app.use('/cart', verifyAccessToken, cartRouter)
+app.use('/cart', verifyAccessToken, verifyAdmin, cartRouter)
 app.use('/public', publicRoute)
-app.use('/condition', verifyAccessToken, conditionRoute)
-app.use('/color', verifyAccessToken, colorRoute)
-app.use('/role', verifyAccessToken, roleRoute)
+app.use('/condition', verifyAccessToken, verifyAdmin, conditionRoute)
+app.use('/color', verifyAccessToken, verifyAdmin, colorRoute)
+app.use('/role', verifyAccessToken, verifyAdmin, roleRoute)
 app.use('/adress', verifyAccessToken, adressRoute)
 
 // Error handler http request

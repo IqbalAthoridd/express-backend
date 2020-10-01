@@ -1,13 +1,10 @@
 const { Router } = require('express')
 const router = Router()
-const { authRegister, authLogin, editUser, sellerRegister, editSeller } = require('../controllers/auth')
-const { upload } = require('../helpers/init_multer')
-const { verifyAccessToken } = require('../middleware/auth')
+const { customerRegister, authLogin, sellerRegister } = require('../controllers/auth')
 
-router.post('/register', authRegister)
+router.post('/customer/register', customerRegister)
 router.post('/seller/register', sellerRegister)
-router.post('/seller/storeprofile', editSeller)
 router.post('/login', authLogin)
-router.patch('/myaccount', verifyAccessToken, upload.single('avatar', 1), editUser)
+
 
 module.exports = router

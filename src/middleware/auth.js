@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken')
 require('dotenv').config()
+const { response } = require('../helpers/response')
 
 module.exports = {
   signAcessToken: (userid, role) => {
@@ -35,5 +36,20 @@ module.exports = {
       req.payload = payload
       next()
     })
+  },
+  verifySeller: (req, res, next) => {
+    const { role } = req.payload
+    role !== 2 && response(res, 'Forbiddem Access', {}, false, 400)
+    next()
+  },
+  verifyCustomer: (req, res, next) => {
+    const { role } = req.payload
+    role !== 1 && response(res, 'Forbidden Access', {}, false, 400)
+    next()
+  },
+  verifyAdmin: (req, res, next) => {
+    const { role } = req.payload
+    role !== 3 && response(res, 'Forbidden Access', {}, false, 400)
+    next()
   }
 }
