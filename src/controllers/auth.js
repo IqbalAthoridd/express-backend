@@ -1,4 +1,4 @@
-const { registerSchema, updateSchema, sellerregisterSchema} = require('../helpers/validation_schema')
+const { registerSchema, updateSchema, sellerregisterSchema } = require('../helpers/validation_schema')
 const bcrypt = require('bcrypt')
 const { signAcessToken } = require('../middleware/auth')
 const { response } = require('../helpers/response')
@@ -102,10 +102,9 @@ module.exports = {
           ...data,
           avatar: path
         }
-        console.log(path)
       }
-      const { phone_number, birt_day, gender, ...dataUser } = data
-      const { name, email, avatar, ...updateDetail } = data
+      const { birt_day, gender, avatar, ...dataUser } = data
+      const { name, email, phone_number, ...updateDetail } = data
       if (Object.keys(dataUser).length && Object.keys(updateDetail).length) {
         const { affectedRows } = await updateData(table, userid, dataUser)
         const updateDetails = await updateDataPart('user_details', { user_id: userid }, updateDetail)
