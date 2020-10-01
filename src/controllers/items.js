@@ -20,8 +20,8 @@ module.exports = {
       req.files.length === 0 && response(res, 'at least 1 picture uploded', {} ,false, 400)
       const { userid } = req.payload
       const data = await createItemSchema.validateAsync({ ...req.body })
-      const { colorName, hexcode, name, price, description, quantity, condition_id, category_id } = data
-      const result = await await createItemModel({ name, price, description, quantity, condition_id, category_id, user_id: userid })
+      const { colorName, hexcode, ...itemsData } = data
+      const result = await await createItemModel({ ...itemsData, user_id: userid })
       if (result.affectedRows) {
         const colors = await createData('product_colors', { product_id: result.insertId, name: colorName, hexcode })
         const images = req.files.map(data => {
