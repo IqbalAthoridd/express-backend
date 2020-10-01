@@ -80,5 +80,17 @@ module.exports = {
         }
       })
     })
+  },
+  listDataDymc: (data, sortBy, sortTo) => {
+    return new Promise((resolve, reject) => {
+      db.query(`SELECT * FROM ?? WHERE name LIKE ? ORDER BY ${sortBy} ${sortTo} LIMIT ? OFFSET ?`,
+        data, (_err, result, _field) => {
+          if (_err) {
+            reject(_err)
+          } else {
+            resolve(result)
+          }
+        })
+    })
   }
 }

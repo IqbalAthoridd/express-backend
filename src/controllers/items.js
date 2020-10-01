@@ -17,7 +17,7 @@ const { createData, updateData, getDataById, updateDataPart } = require('../help
 module.exports = {
   createItem: async (req, res) => {
     try {
-      req.files.length === 0 && response(res, 'at least 1 picture uploded', {} ,false, 400)
+      req.files.length === 0 && response(res, 'at least 1 picture uploded', {}, false, 400)
       const { userid } = req.payload
       const data = await createItemSchema.validateAsync({ ...req.body })
       const { colorName, hexcode, ...itemsData } = data

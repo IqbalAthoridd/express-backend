@@ -1,7 +1,7 @@
-const model = require('../models/public')
-const { getItemModel, searchItemModel } = require('../models/items')
+const { getItemModel, searchItemModel, countGetItemModel } = require('../models/items')
 const { listData } = require('../helpers/database_query')
 const { response } = require('../helpers/response')
+const { pagination } = require('../helpers/pagination')
 
 module.exports = {
   newProducts: async (req, res) => {
@@ -27,7 +27,6 @@ module.exports = {
     }
   },
   categoryList: async (req, res) => {
-    const page = 1
     const sortTo = 'ASC'
     const table = 'categories'
     const limit = 200
@@ -43,6 +42,41 @@ module.exports = {
       response(res, 'Category list', { data: result })
     } else {
       response(res, 'Failed', {}, false, 400)
+    }
+  },
+  searchCategory: async (req, res) => {
+    const { page = 1, limit = 5, sortBy } = req.query
+    const { name } = req.params
+
+    const searchKey = 'category'
+    const searchValue = name
+    let sortName = ''
+    let sortValue = name
+
+    if (typeof sortBy === 'object') {
+      sortName = Object.keys(sortBy)[0]
+      sortValue = Object.values(sortBy)[0]
+    } else {
+      sortName = 'creat_at'
+      sortValue = 'ASC'
+    }
+
+    const offset = (page - 1) * limit
+
+    const data = [
+      ['%' + searchValue + '%'],
+      +limit,
+      offset
+    ]
+
+    const result = await searchItemModel(searchKey, [sortName, sortValue], data)
+    if (result.length) {
+      const data = await countGetItemModel([searchKey, searchValue])
+      const { count } = data[0]
+      const pageInfo = await pagination(req.query, page, limit, count)
+      response(res, 'List of Products', { data: result, pageInfo })
+    } else {
+      response(res, 'Data not found', {}, false, 404)
     }
   }
 
