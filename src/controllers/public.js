@@ -1,5 +1,6 @@
 const model = require('../models/public')
 const { getItemModel, searchItemModel } = require('../models/items')
+const { listData } = require('../helpers/database_query')
 const { response } = require('../helpers/response')
 
 module.exports = {
@@ -24,5 +25,25 @@ module.exports = {
     } catch (error) {
 
     }
+  },
+  categoryList: async (req, res) => {
+    const page = 1
+    const sortTo = 'ASC'
+    const table = 'categories'
+    const limit = 200
+    const offset = 0
+    const data = [
+      [table],
+      ['%' + '' + '%'],
+      [+limit],
+      [offset]
+    ]
+    const result = await listData(data, sortTo)
+    if (result.length) {
+      response(res, 'Category list', { data: result })
+    } else {
+      response(res, 'Failed', {}, false, 400)
+    }
   }
+
 }
