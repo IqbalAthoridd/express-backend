@@ -37,6 +37,7 @@ module.exports = {
   updateData: (table, id, data) => {
     return new Promise((resolve, reject) => {
       db.query('UPDATE ?? SET ? WHERE id= ?', [table, data, id], (_err, result, _field) => {
+        console.log(_err)
         if (_err) {
           reject(_err)
         } else {
@@ -71,6 +72,7 @@ module.exports = {
   updateDataPart: (table, id, data) => {
     return new Promise((resolve, reject) => {
       db.query('UPDATE ?? SET ? WHERE ?', [table, data, id], (_err, result, _field) => {
+        console.log(_err)
         if (_err) {
           reject(_err)
         } else {

@@ -125,5 +125,40 @@ module.exports = {
       })
       err.isJoi === true && response(res, err.message, false, 400)
     }
+  },
+  editSeller: async (req, res) => {
+    try {
+      const { userid } = req.payload
+      console.log(req.body)
+      if (req.file !== undefined) {
+        var { path } = req.file
+        path = path.replace(/\\/g, '/')
+        req.body = {
+          ...req.body,
+          avatar: path
+        }
+      }
+      const { avatar, description, store_name, ...dataUser } = req.body
+      const { name, email, phone_number, ...updateDetail } = req.body
+      if (Object.keys(dataUser).length && Object.keys(updateDetail).length) {
+        const { affectedRows } = await updateData(table, userid, dataUser)
+        const updateDetails = await updateDataPart('user_details', { user_id: userid }, updateDetail)
+        affectedRows && updateDetails.affectedRows
+          ? response(res, 'Data updated')
+          : response(res, 'Failed updated try again', {}, false, 400)
+      } else {
+        response(res, 'At least one filled', {}, false, 400)
+        // fs.unlink(`${path}`, function (err) {
+        //   if (err) throw err
+        // })
+      }
+    } catch (err) {
+      // fs.unlink(`${path}`, function (err) {
+      //   console.log(err)
+      //   if (err) throw err
+      //   console.log('File deleted!')
+      // })
+      err.isJoi === true && response(res, err.message, false, 400)
+    }
   }
 }
