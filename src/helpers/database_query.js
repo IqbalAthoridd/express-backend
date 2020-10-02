@@ -23,6 +23,16 @@ module.exports = {
       })
     })
   },
+  getDataByIdTwo: (table, id1, id2) => {
+    return new Promise((resolve, reject) => {
+      db.query('SELECT * FROM ?? WHERE ? AND ?', [table, id1, id2], (_err, result, _field) => {
+        if (!_err) {
+          resolve(result)
+        }
+        reject(_err)
+      })
+    })
+  },
   deleteDataById: (table, id) => {
     return new Promise((resolve, reject) => {
       db.query('DELETE FROM ?? WHERE id=?', [table, id], (_err, result, _field) => {

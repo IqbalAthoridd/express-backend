@@ -1,5 +1,5 @@
 const { response } = require('../helpers/response')
-const { createData, updateData, deleteDataById } = require('../helpers/database_query')
+const { createData, updateData, deleteDataById, getDataById, getDataByIdTwo } = require('../helpers/database_query')
 const { adreSchema } = require('../helpers/validation_schema')
 const table = 'user_adress'
 
@@ -46,6 +46,26 @@ module.exports = {
       affectedRows
         ? response(res, 'Adress deleted')
         : response(res, 'Failed to delete', {}, false, 400)
+    } catch (error) {
+
+    }
+  },
+  getAdress: async (req, res) => {
+    const { userid } = req.payload
+    const result = await getDataById(table, { user_id: userid })
+    result.length
+      ? response(res, 'list adress', { data: result })
+      : response(res, 'You dont\'t have adress yet', {}, false, 400)
+  },
+  getById: async (req, res) => {
+    try {
+      const { userid } = req.payload
+      const { id } = req.params
+
+      const result = await getDataByIdTwo(table, { id: id }, { user_id: userid })
+      result.length
+        ? response(res, 'Adress', { data: result })
+        : response(res, 'Adress not found', {}, false, 404)
     } catch (error) {
 
     }

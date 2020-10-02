@@ -12,6 +12,8 @@ router.post('/adress', adress.createAdress)
 router.put('/adress/:id', adress.updateAdress)
 router.put('/adress/:id', adress.updatePartAdress)
 router.delete('/adress/:id', adress.deleteAdress)
+router.get('/adress', adress.getAdress)
+router.get('/adress/:id', adress.getById)
 
 // Cart Routes
 router.post('/carts', cart.createCart)
