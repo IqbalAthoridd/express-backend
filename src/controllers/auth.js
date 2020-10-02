@@ -2,7 +2,7 @@ const { registerSchema, sellerregisterSchema } = require('../helpers/validation_
 const bcrypt = require('bcrypt')
 const { signAcessToken } = require('../middleware/auth')
 const { response } = require('../helpers/response')
-const { createData, getDataById } = require('../helpers/database_query')
+const { createData, getDataById, updateData } = require('../helpers/database_query')
 const table = 'users'
 
 module.exports = {
@@ -88,6 +88,25 @@ module.exports = {
       }
     } catch (err) {
 
+    }
+  },
+  authResetPassword: async (req, res) => {
+    try {
+      let { email, password, newPassword, otp } = req.body
+      const data = await getDataById(table, { email })
+      const fakeOtp = 12345
+      if (data.length) {
+        fakeOtp !== +otp && response(res, 'Invalid OTP code', {}, false, 400)
+        password !== newPassword && response(res, 'Password not match')
+        const salt = 10
+        password = await bcrypt.hash(password, salt)
+        const { affectedRows } = await updateData(table, { id: data[0].id }, { password })
+        affectedRows
+          ? response(res, 'password updated')
+          : response(res, 'Failed', {}, false, 400)
+      }
+    } catch (error) {
+      response(res, 'Internal server error')
     }
   }
 }
