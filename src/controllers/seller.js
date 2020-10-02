@@ -1,5 +1,5 @@
 const { response } = require('../helpers/response')
-const {updateData, updateDataPart } = require('../helpers/database_query')
+const { updateData, updateDataPart } = require('../helpers/database_query')
 const { updateSellerSchema } = require('../helpers/validation_schema')
 const fs = require('fs')
 const table = 'users'

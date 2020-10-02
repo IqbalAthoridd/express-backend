@@ -5,6 +5,7 @@ const cart = require('../controllers/cart')
 const auth = require('../controllers/customer')
 const adress = require('../controllers/adress')
 const rating = require('../controllers/rating')
+const checkOut = require('../controllers/checkout')
 
 // Profile
 router.patch('/myaccount', upload.single('avatar', 1), auth.myaccount)
@@ -24,5 +25,8 @@ router.put('/carts/:id', cart.UpdateTotalItem)
 // Rating
 router.post('/ratings/:id', rating.createRating)
 router.patch('/ratings/:id', rating.updateRating)
+
+// checkOut
+router.post('/checkout', checkOut.createCheckout)
 
 module.exports = router
