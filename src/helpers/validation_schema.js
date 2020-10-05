@@ -9,7 +9,6 @@ const registerSchema = Joi.object({
   name: Joi.string().min(4).max(20).trim().replace("'", '\'').required(),
   email: Joi.string().lowercase().min(5).trim().email().replace("'", '\'').required(),
   password: Joi.string().min(8).trim().replace("'", '\'').required(),
-  role_id: Joi.number().required()
 })
 const sellerregisterSchema = Joi.object({
   name: Joi.string().min(4).max(20).trim().replace("'", '\'').required(),
@@ -17,7 +16,6 @@ const sellerregisterSchema = Joi.object({
   password: Joi.string().min(8).trim().replace("'", '\'').required(),
   phone_number: Joi.string().trim().required(),
   store_name: Joi.string().trim().required(),
-  role_id: Joi.number().required()
 })
 
 const updateSchema = Joi.object({
