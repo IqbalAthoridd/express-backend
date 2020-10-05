@@ -16,7 +16,7 @@ module.exports = {
         dataResult = [{ email: '' }]
       }
       if (dataResult[0].email !== data.email) {
-        const result = await createData(table, { ...data })
+        const result = await createData(table, { ...data, role_id: 1 })
         if (result.affectedRows) {
           const detailUser = await createData('user_details', { user_id: result.insertId })
           detailUser.affectedRows &&
@@ -48,7 +48,7 @@ module.exports = {
         dataResult = [{ email: '' }]
       }
       if (dataResult[0].email !== data.email) {
-        const result = await createData(table, { ...data })
+        const result = await createData(table, { ...data, role_id: 2 })
         if (result.affectedRows) {
           const detailUser = await createData('user_details', { user_id: result.insertId })
           detailUser.affectedRows &&
