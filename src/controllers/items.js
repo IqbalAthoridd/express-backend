@@ -13,7 +13,6 @@ const {
   createImageModel
 } = require('../models/items')
 const { createData, updateData, getDataById, updateDataPart } = require('../helpers/database_query')
-const { get } = require('../routes/auth')
 
 module.exports = {
   createItem: async (req, res) => {
@@ -45,9 +44,9 @@ module.exports = {
     const { id } = req.params
 
     const result = await getItemModel(id)
-
+    const image = result.map(data => data.url)
     result.length
-      ? response(res, 'Data', { data: result })
+      ? response(res, 'Data', { data: { ...result[0], url: undefined, picture: image } })
       : response(res, "Data does't exist", {}, false, 404)
   },
   getItem: async (req, res) => {
