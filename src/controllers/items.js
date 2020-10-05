@@ -13,6 +13,7 @@ const {
   createImageModel
 } = require('../models/items')
 const { createData, updateData, getDataById, updateDataPart } = require('../helpers/database_query')
+const { get } = require('../routes/auth')
 
 module.exports = {
   createItem: async (req, res) => {
@@ -113,7 +114,6 @@ module.exports = {
   updatePatrialItem: async (req, res) => {
     try {
       const { id } = req.params
-      // const { colorName, hexcode,name,price,description,condition_id,category_id } = req.body
       const data = await updatePartialsSchema.validateAsync({ ...req.body })
       const result = await getDataById(table, { id })
       if (result.length) {
