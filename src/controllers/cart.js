@@ -15,8 +15,7 @@ module.exports = {
     if (data.length) {
       response(res, 'Already added on carts', {}, false, 400)
     } else {
-      const images = await getDataById('product_picture', { produkId: productId })
-      const { affectedRows } = await createData(table, { userId: userid, productId, total, picture: images[0].url })
+      const { affectedRows } = await createData(table, { userId: userid, productId, total })
       affectedRows
         ? response(res, 'Added to cart')
         : response(res, 'Failed to added try agin!', {}, false, 400)
