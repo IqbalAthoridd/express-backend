@@ -24,9 +24,10 @@ module.exports = {
       const result = await await createItemModel({ ...itemsData, user_id: userid })
       if (result.affectedRows) {
         const colors = await createData('product_colors', { product_id: result.insertId, name: colorName, hexcode })
-        const images = req.files.map(data => {
-          return [result.insertId, data.path.replace(/\\/g, '/')]
+        const images = req.files.map((data, index) => {
+          return [result.insertId, data.path.replace(/\\/g, '/'), index]
         })
+        console.log(images)
         const { affectedRows } = await createImageModel(images, result.insertId)
 
         affectedRows && colors.affectedRows
