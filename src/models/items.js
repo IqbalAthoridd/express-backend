@@ -5,8 +5,8 @@ const table = 'products'
 module.exports = {
   getItemModel: (id) => {
     return new Promise((resolve, reject) => {
-      const rowSubQuery = `i.id,i.name AS 'name',i.price,i.description,i.quantity,c.name AS 'condition' 
-      ,ct.name AS 'category',p.url,i.create_at,i.update_at`
+      const rowSubQuery = `i.id,i.name AS 'name',i.price,i.quantity,c.name AS 'condition' 
+      ,ct.name AS 'category',p.url,i.description,i.create_at,i.update_at`
       const query = `SELECT ${rowSubQuery} FROM products i INNER JOIN categories ct on i.category_id = ct.id 
       INNER JOIN conditions c ON i.condition_id = c.id INNER JOIN product_picture p ON i.id = p.produkId WHERE i.id = ?`
       db.query(`${query}`, id, (_err, result, _field) => {
@@ -56,10 +56,10 @@ module.exports = {
   },
   searchItemModel: (searchKey, sort, data) => {
     return new Promise((resolve, reject) => {
-      const rowSubQuery = `i.id,i.name AS 'name',i.price,i.description,i.quantity,c.name AS 'condition' 
-      ,ct.name AS 'category',i.create_at,i.update_at`
+      const rowSubQuery = `i.id,i.name AS 'name',p.url,p.indexOf,i.price,i.quantity,c.name AS 'condition' 
+      ,ct.name AS 'category',i.description,i.create_at,i.update_at`
       const subQuery = `SELECT ${rowSubQuery} FROM products i INNER JOIN categories ct on i.category_id = ct.id 
-      INNER JOIN conditions c ON i.condition_id = c.id`
+      INNER JOIN conditions c ON i.condition_id = c.id INNER JOIN product_picture p ON i.id = p.produkId WHERE p.indexOf = 0`
       db.query(`SELECT * FROM (${subQuery}) as table_1 WHERE ${searchKey} LIKE ? 
       ORDER BY ${sort[0]} ${sort[1]} LIMIT ? OFFSET ?`, data, (_err, result, _field) => {
         if (_err) {
@@ -87,7 +87,8 @@ module.exports = {
   },
   createImageModel: (arr) => {
     return new Promise((resolve, reject) => {
-      db.query('INSERT INTO product_picture (produkId,url) VALUES ?', [arr], (_err, result, _field) => {
+      db.query('INSERT INTO product_picture (produkId,url,indexOf) VALUES ?', [arr], (_err, result, _field) => {
+        console.log(_err)
         if (!_err) {
           resolve(result)
         }
