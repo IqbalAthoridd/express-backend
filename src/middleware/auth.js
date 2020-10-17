@@ -39,12 +39,12 @@ module.exports = {
   },
   verifySeller: (req, res, next) => {
     const { role } = req.payload
-    role !== 2 && response(res, 'Forbiddem Access', {}, false, 400)
+    role !== 4 && response(res, 'Forbiddem Access', {}, false, 400)
     next()
   },
   verifyCustomer: (req, res, next) => {
     const { role } = req.payload
-    role !== 1 && response(res, 'Forbidden Access', {}, false, 400)
+    role !== 3 && response(res, 'Forbidden Access', {}, false, 400)
     next()
   },
   verifyAdmin: (req, res, next) => {
