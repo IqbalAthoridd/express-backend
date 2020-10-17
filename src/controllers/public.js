@@ -6,13 +6,15 @@ const { pagination } = require('../helpers/pagination')
 module.exports = {
   newProducts: async (req, res) => {
     const limit = 15
-    const offset = 2
+    const offset = 0
     const item = [['%' + '' + '%'], limit, offset]
     const searchKey = 'name'
     const sort = ['create_at', 'DESC']
     const data = await searchItemModel(searchKey, sort, item)
     if (data) {
       res.send({ succes: true, message: 'New Items', data: data })
+    } else {
+      response(res, 'data not found')
     }
   },
   detailProduct: async (req, res) => {
@@ -24,6 +26,17 @@ module.exports = {
         : response(res, 'internal server error', {}, false, 500)
     } catch (error) {
 
+    }
+  },
+  pupularProduct: async (req, res) => {
+    const limit = 15
+    const offset = 0
+    const item = [['%' + '' + '%'], limit, offset]
+    const searchKey = 'name'
+    const sort = ['ratings', 'DESC']
+    const data = await searchItemModel(searchKey, sort, item)
+    if (data) {
+      res.send({ succes: true, message: 'New Items', data: data })
     }
   },
   categoryList: async (req, res) => {
@@ -47,6 +60,7 @@ module.exports = {
   searchCategory: async (req, res) => {
     const { page = 1, limit = 5, sortBy } = req.query
     const { name } = req.params
+    console.log(name)
 
     const searchKey = 'category'
     const searchValue = name
