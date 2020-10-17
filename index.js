@@ -24,6 +24,7 @@ app.use(cors())
 app.use(bodyParser.urlencoded({
   extended: false
 }))
+app.use(express.static(`${__dirname}`))
 
 app.use('/seller', verifyAccessToken, verifySeller, sellerRoute)
 app.use('/customer', verifyAccessToken, verifyCustomer, customerRoute)
