@@ -1,5 +1,5 @@
 const { response } = require('../helpers/response')
-const { createData, updateData, updateDataPart } = require('../helpers/database_query')
+const { createData, updateData, updateDataPart, getDataById } = require('../helpers/database_query')
 const { updateSchema } = require('../helpers/validation_schema')
 const fs = require('fs')
 const table = 'users'
@@ -43,6 +43,16 @@ module.exports = {
       }
     } catch (err) {
       err.isJoi === true && response(res, err.message, false, 400)
+    }
+  },
+  profile: async (req, res)=>{
+    const {userid} = req.payload
+    const data = await getDataById('users',{id:userid})
+    if(data.length> 0){
+    const details = await getDataById('user_details', {user_id:userid})
+      details.length ?
+      response(res,"user Info",{data:{id:data[0].id,name:data[0].name,email:data[0].email,phone_number:data[0].phone_number,birt_day:details[0].birt_day,gender:details[0].gender,avatar:details[0].avatar}})
+      : response(res,"error")
     }
   }
 }
