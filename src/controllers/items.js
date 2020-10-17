@@ -27,7 +27,6 @@ module.exports = {
         const images = req.files.map((data, index) => {
           return [result.insertId, data.path.replace(/\\/g, '/'), index]
         })
-        console.log(images)
         const { affectedRows } = await createImageModel(images, result.insertId)
 
         affectedRows && colors.affectedRows
