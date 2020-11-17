@@ -6,6 +6,7 @@ const auth = require('../controllers/customer')
 const adress = require('../controllers/adress')
 const rating = require('../controllers/rating')
 const checkOut = require('../controllers/checkout')
+const balance = require('../controllers/balances')
 
 // Profile
 router.patch('/myaccount', upload.single('avatar', 1), auth.myaccount)
@@ -29,5 +30,7 @@ router.patch('/ratings/:id', rating.updateRating)
 
 // checkOut
 router.post('/checkout', checkOut.createCheckout)
+
+// balance
 
 module.exports = router

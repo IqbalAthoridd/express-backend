@@ -20,6 +20,7 @@ module.exports = {
         if (result.affectedRows) {
           const detailUser = await createData('user_details', { user_id: result.insertId })
           detailUser.affectedRows &&
+          await createData('user_balances', { user_id: result.insertId, payment_id: 1, balance: 0 })
           response(res, 'User Created',
             {
               data: {
