@@ -114,5 +114,27 @@ module.exports = {
         }
       })
     })
+  },
+  deleteData: (table, id) => {
+    return new Promise((resolve, reject) => {
+      db.query('DELETE FROM ?? WHERE ?', [table, id], (_err, result, _field) => {
+        if (_err) {
+          reject(_err)
+        } else {
+          resolve(result)
+        }
+      })
+    })
+  },
+  getAllData: (table) => {
+    return new Promise((resolve, reject) => {
+      db.query('SELECT id, name, picture FROM ??', [table], (_err, result, _field) => {
+        if (_err) {
+          reject(_err)
+        } else {
+          resolve(result)
+        }
+      })
+    })
   }
 }
