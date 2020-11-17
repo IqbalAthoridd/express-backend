@@ -8,14 +8,14 @@ const categorySchema = Joi.object({
 const registerSchema = Joi.object({
   name: Joi.string().min(4).max(20).trim().replace("'", '\'').required(),
   email: Joi.string().lowercase().min(5).trim().email().replace("'", '\'').required(),
-  password: Joi.string().min(8).trim().replace("'", '\'').required(),
+  password: Joi.string().min(8).trim().replace("'", '\'').required()
 })
 const sellerregisterSchema = Joi.object({
   name: Joi.string().min(4).max(20).trim().replace("'", '\'').required(),
   email: Joi.string().lowercase().min(5).trim().email().replace("'", '\'').required(),
   password: Joi.string().min(8).trim().replace("'", '\'').required(),
   phone_number: Joi.string().trim().required(),
-  store_name: Joi.string().trim().required(),
+  store_name: Joi.string().trim().required()
 })
 
 const updateSchema = Joi.object({
@@ -87,6 +87,11 @@ const updateRatingSchema = Joi.object({
   comment: Joi.string().trim()
 })
 
+const createPaymentSchema = Joi.object({
+  name: Joi.string().trim().required(
+  )
+})
+
 module.exports = {
   categorySchema,
   registerSchema,
@@ -100,5 +105,6 @@ module.exports = {
   sellerregisterSchema,
   ratingSchema,
   updateRatingSchema,
-  updateSellerSchema
+  updateSellerSchema,
+  createPaymentSchema
 }
