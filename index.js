@@ -15,6 +15,7 @@ const adressRoute = require('./src/routes/adress')
 const sellerRoute = require('./src/routes/seller')
 const customerRoute = require('./src/routes/customer')
 const adminRoute = require('./src/routes/admin')
+const PaymentsRoute = require('./src/routes/payments')
 require('dotenv').config()
 
 const { verifyAccessToken, verifySeller, verifyCustomer, verifyAdmin } = require('./src/middleware/auth')
@@ -38,6 +39,7 @@ app.use('/condition', verifyAccessToken, verifyAdmin, conditionRoute)
 app.use('/color', verifyAccessToken, verifyAdmin, colorRoute)
 app.use('/role', verifyAccessToken, verifyAdmin, roleRoute)
 app.use('/adress', verifyAccessToken, adressRoute)
+app.use('/payment', verifyAccessToken, verifyAdmin, PaymentsRoute)
 
 // Error handler http request
 app.use(async (req, res, next) => {
