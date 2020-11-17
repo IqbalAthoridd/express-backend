@@ -49,7 +49,7 @@ module.exports = {
   },
   verifyAdmin: (req, res, next) => {
     const { role } = req.payload
-    role !== 3 && response(res, 'Forbidden Access', {}, false, 400)
+    role !== 1 && response(res, 'Forbidden Access', {}, false, 400)
     next()
   }
 }
