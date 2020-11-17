@@ -4,7 +4,7 @@ const adress = require('../controllers/adress')
 
 router.post('/', adress.createAdress)
 router.put('/:id', adress.updateAdress)
-router.put('/:id', adress.updatePartAdress)
+router.patch('/:id', adress.updatePartAdress)
 router.delete('/:id', adress.deleteAdress)
 
 module.exports = router
