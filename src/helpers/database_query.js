@@ -136,5 +136,18 @@ module.exports = {
         }
       })
     })
+  },
+  listAdress: (data) => {
+    return new Promise((resolve, reject) => {
+      db.query('SELECT * FROM user_adress WHERE user_id = ? ORDER BY primary_adress DESC LIMIT ? OFFSET ?',
+        data, (_err, result, _field) => {
+          console.log(_err)
+          if (_err) {
+            reject(_err)
+          } else {
+            resolve(result)
+          }
+        })
+    })
   }
 }
