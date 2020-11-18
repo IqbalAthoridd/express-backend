@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 17, 2020 at 12:35 PM
+-- Generation Time: Nov 18, 2020 at 01:57 AM
 -- Server version: 10.4.13-MariaDB
 -- PHP Version: 7.4.8
 
@@ -88,6 +88,26 @@ CREATE TABLE `conditions` (
 INSERT INTO `conditions` (`id`, `name`) VALUES
 (1, 'New'),
 (2, 'Used');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `payments`
+--
+
+CREATE TABLE `payments` (
+  `id` int(11) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `picture` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `payments`
+--
+
+INSERT INTO `payments` (`id`, `name`, `picture`) VALUES
+(1, 'Blanja paymens', 'assets/picture/picture-1605579828916.jpg'),
+(2, 'Master Card', 'assets/picture/picture-1605584358437.jpg');
 
 -- --------------------------------------------------------
 
@@ -229,6 +249,35 @@ INSERT INTO `roles` (`id`, `name`, `description`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `transaction`
+--
+
+CREATE TABLE `transaction` (
+  `id` int(11) NOT NULL,
+  `tracking_number` int(200) NOT NULL,
+  `product_name` varchar(255) NOT NULL,
+  `category` int(255) NOT NULL,
+  `color` varchar(50) NOT NULL,
+  `size` varchar(50) NOT NULL,
+  `unit` int(11) NOT NULL,
+  `price` int(11) NOT NULL,
+  `adress` text NOT NULL,
+  `payment` varchar(255) NOT NULL,
+  `delivery` varchar(255) NOT NULL,
+  `discount` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `transaction`
+--
+
+INSERT INTO `transaction` (`id`, `tracking_number`, `product_name`, `category`, `color`, `size`, `unit`, `price`, `adress`, `payment`, `delivery`, `discount`) VALUES
+(414134, 1412124124, 'Aus rog', 0, '#adads', 'l', 2, 20000, 'qdadasd', 'asdasda', 'asdsadasd', 'adasdas'),
+(414135, 1412124124, 'Aus rog', 0, '#adads', 'l', 2, 20000, 'qdadasd', 'asdasda', 'asdsadasd', 'adasdas');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `users`
 --
 
@@ -251,7 +300,9 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`id`, `name`, `email`, `password`, `phone_number`, `store_name`, `role_id`, `create_at`, `update_at`) VALUES
 (1, 'iqbal', 'iqbal25@gmail.com', '$2b$10$tZFFxFa2qvawKy.kJITeCehTyLawZ05DwkDgf3D0rxjTJgy3/Ogbq', NULL, NULL, 3, NULL, NULL),
 (2, 'Seller', 'seller@gmail.com', '$2b$10$9yg6U691MjwVvNsn.eQaKOmUzN9jS8NnT82om6lqExxWGPul6AsXq', '0857224624', 'Tokopaedi', 4, NULL, NULL),
-(3, 'iqbal', 'iqball@gmail.com', '$2b$10$4hDZwwIe1F0SJKAFMaQcZuYEt0nwMOIsfkFEd1tgwrbEFvMFjamyK', NULL, NULL, 3, NULL, NULL);
+(3, 'iqbal', 'iqball@gmail.com', '$2b$10$4hDZwwIe1F0SJKAFMaQcZuYEt0nwMOIsfkFEd1tgwrbEFvMFjamyK', NULL, NULL, 3, NULL, NULL),
+(4, 'admin', 'admin@gmail.com', '$2b$10$9S7Luccp9ZaEdrVqFERdIOTi4ixTczjRfLnfsGDE4odmw.8j.JQ6S', NULL, NULL, 1, NULL, '2020-11-17 10:20:23'),
+(5, 'iqbal', 'iqbal22@gmail.com', '$2b$10$s49BaERzE0KYg0gOZyTn7e9XryV0qXbtBdtuyMJrRZrdp2Xp12NM6', NULL, NULL, 3, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -266,8 +317,40 @@ CREATE TABLE `user_adress` (
   `phone_number` varchar(20) NOT NULL,
   `adress` varchar(30) NOT NULL,
   `postal_code` varchar(25) NOT NULL,
-  `city` varchar(50) NOT NULL
+  `city` varchar(50) NOT NULL,
+  `primary_adress` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `user_adress`
+--
+
+INSERT INTO `user_adress` (`id`, `user_id`, `recipient`, `phone_number`, `adress`, `postal_code`, `city`, `primary_adress`) VALUES
+(1, 5, 'Bapa Budi', '08572174129', 'Cilame Permai', '40230', 'Bandung Barat', 0),
+(2, 5, 'Agus asus oggggg', '087645263', 'Bangka belitung, depan indomar', '4923', 'Canghui', 1),
+(3, 5, 'Bapa Budi', '08572174129', 'Cilame Permai', '40230', 'Bandung Barat', 0),
+(4, 5, 'Bapa ALi', '08572174129', 'Cilame Permai', '40230', 'Bandung Barat', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user_balances`
+--
+
+CREATE TABLE `user_balances` (
+  `id` int(11) NOT NULL,
+  `balance` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `payment_id` int(11) NOT NULL,
+  `card_number` int(25) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `user_balances`
+--
+
+INSERT INTO `user_balances` (`id`, `balance`, `user_id`, `payment_id`, `card_number`) VALUES
+(1, 20000, 5, 1, NULL);
 
 -- --------------------------------------------------------
 
@@ -289,7 +372,9 @@ CREATE TABLE `user_details` (
 INSERT INTO `user_details` (`user_id`, `birt_day`, `gender`, `avatar`) VALUES
 (1, '0000-00-00', 'laki-laki', ''),
 (2, '0000-00-00', 'laki-laki', ''),
-(3, '0000-00-00', 'laki-laki', '');
+(3, '0000-00-00', 'laki-laki', ''),
+(4, '0000-00-00', 'laki-laki', ''),
+(5, '0000-00-00', 'laki-laki', '');
 
 --
 -- Indexes for dumped tables
@@ -313,6 +398,12 @@ ALTER TABLE `categories`
 -- Indexes for table `conditions`
 --
 ALTER TABLE `conditions`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `payments`
+--
+ALTER TABLE `payments`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -351,6 +442,12 @@ ALTER TABLE `roles`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `transaction`
+--
+ALTER TABLE `transaction`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
@@ -363,6 +460,14 @@ ALTER TABLE `users`
 ALTER TABLE `user_adress`
   ADD PRIMARY KEY (`id`),
   ADD KEY `user_id` (`user_id`);
+
+--
+-- Indexes for table `user_balances`
+--
+ALTER TABLE `user_balances`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`,`payment_id`),
+  ADD KEY `payment_id` (`payment_id`);
 
 --
 -- Indexes for table `user_details`
@@ -393,6 +498,12 @@ ALTER TABLE `conditions`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
+-- AUTO_INCREMENT for table `payments`
+--
+ALTER TABLE `payments`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
@@ -417,16 +528,28 @@ ALTER TABLE `roles`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
+-- AUTO_INCREMENT for table `transaction`
+--
+ALTER TABLE `transaction`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=414136;
+
+--
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `user_adress`
 --
 ALTER TABLE `user_adress`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `user_balances`
+--
+ALTER TABLE `user_balances`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Constraints for dumped tables
@@ -476,6 +599,13 @@ ALTER TABLE `users`
 --
 ALTER TABLE `user_adress`
   ADD CONSTRAINT `user_adress_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `user_balances`
+--
+ALTER TABLE `user_balances`
+  ADD CONSTRAINT `user_balances_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `user_balances_ibfk_2` FOREIGN KEY (`payment_id`) REFERENCES `payments` (`id`) ON UPDATE CASCADE;
 
 --
 -- Constraints for table `user_details`
