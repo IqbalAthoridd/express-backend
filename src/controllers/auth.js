@@ -36,7 +36,7 @@ module.exports = {
         response(res, `Email ${data.email} already use, try another email`, {}, false, 400)
       }
     } catch (err) {
-      err.isJoi === true && response(res, err.message, false, 400)
+      err.isJoi === true && response(res, err.message,{}, false, 400)
     }
   },
   sellerRegister: async (req, res) => {
@@ -68,7 +68,7 @@ module.exports = {
         response(res, `Email ${data.email} already use, try another email`, {}, false, 400)
       }
     } catch (err) {
-      err.isJoi === true && response(res, err.message, false, 400)
+      err.isJoi === true && response(res, err.message,{}, false, 400)
     }
   },
   authLogin: async (req, res) => {
