@@ -2,7 +2,7 @@ const {
   getCartModel,
   countCartModel
 } = require('../models/cart')
-const { getDataById, createData, deleteDataById, updateData } = require('../helpers/database_query')
+const { getDataById, createData, deleteDataById, updateData, getDataByIdTwo } = require('../helpers/database_query')
 const { response } = require('../helpers/response')
 const { pagination } = require('../helpers/pagination')
 const table = 'carts'
@@ -11,7 +11,8 @@ module.exports = {
   createCart: async (req, res) => {
     const { userid } = req.payload
     const { productId, total } = req.body
-    const data = await getDataById(table, { productId: productId })
+    const data = await getDataByIdTwo(table, { productId: productId },{userId:userid})
+    console.log(data)
     if (data.length) {
       response(res, 'Already added on carts', {}, false, 400)
     } else {
