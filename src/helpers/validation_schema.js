@@ -77,7 +77,8 @@ const adreSchema = Joi.object({
   adress: Joi.string().trim().required(),
   postal_code: Joi.string().trim().required(),
   city: Joi.string().trim().required(),
-  primary_adress: Joi.number()
+  primary_adress: Joi.boolean(),
+  saveAs:Joi.string().trim().required()
 })
 const ratingSchema = Joi.object({
   rating: Joi.number().required(),
